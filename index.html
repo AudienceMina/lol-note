@@ -5,7 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LoLノート トップ</title>
 <style>
+/* 明るい配色（標準）。白背景でも読めるよう、文字に使う色は濃いめ */
 :root {
+  --bg: #f3f5f8;
+  --panel: #ffffff;
+  --panel-2: #eef1f5;
+  --border: #d3d9e1;
+  --text: #1b2330;
+  --muted: #5b6676;
+  --accent: #0a7d63;
+  --accent-ink: #ffffff;
+  --good: #1d7f45;
+  --warn: #9a5b00;
+  --bad: #c0392b;
+  --radius: 10px;
+  color-scheme: light;
+}
+/* 暗い配色（ヘッダーの切り替えボタンで選ぶ） */
+:root[data-theme="dark"] {
   --bg: #0f1218;
   --panel: #171c25;
   --panel-2: #1f2632;
@@ -17,7 +34,7 @@
   --good: #5fd38d;
   --warn: #f2b84b;
   --bad: #f06d6d;
-  --radius: 10px;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body {
@@ -1428,6 +1445,7 @@ document.body.innerHTML = `
     <select id="champ" title="使用チャンピオン"></select>
     <button class="btn sm" id="champ-add" title="データに無いチャンピオンを追加">＋追加</button>
     <button class="btn sm danger" id="champ-del" title="＋追加で足したチャンピオンを削除" hidden>削除</button>
+    <button class="btn sm" id="theme-toggle" title="明るい / 暗い配色を切り替え"></button>
   </div>
   <nav>
     <button class="tab active" data-page="pick">BAN/PICK<kbd>1</kbd></button>
@@ -1536,6 +1554,21 @@ $('champ-del').addEventListener('click', () => {
   LS.pool = LS.pool.filter((n) => n !== name);
   setChamp(champs()[0].name);
   toast(`${name} を削除しました`);
+});
+
+// 配色（明るい / 暗い）。端末ごとに覚えておく。標準は明るい配色
+const THEME_KEY = 'lol-note-theme';
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  $('theme-toggle').textContent = theme === 'dark' ? '☀ 明るく' : '🌙 暗く';
+}
+let theme = 'light';
+try { theme = localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light'; } catch (e) {}
+applyTheme(theme);
+$('theme-toggle').addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+  applyTheme(theme);
 });
 function setChamp(name) {
   LS.champ = name; save(); renderAll();
