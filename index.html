@@ -218,6 +218,8 @@ code.cmd { padding: 6px 10px; font-size: 14px; user-select: all; }
 window.LANE = {
   id: 'top',
   name: 'トップ',
+  // 初心者向けに味方ジャングラーの欄は使わない（true にすると復活）
+  useAlly: false,
   allyLabel: '味方ジャングラー',
   allies: [
     'リー・シン',
@@ -1371,6 +1373,8 @@ window.GLOSSARY = [
 const L = window.LANE;
 // tools/build-single.js で作った1ファイル版（統計の更新手順は出さない）
 const SINGLE = !!window.LOL_NOTE_SINGLE;
+// 味方の欄（sup: 味方ADC）。data/<lane>.js で useAlly: false にすると欄ごと使わない
+const USE_ALLY = L.useAlly !== false;
 // 作成済みのレーン（ヘッダーのリンクに使う）
 const LANES = [{ id: 'top', name: 'トップ' }, { id: 'sup', name: 'サポート' }];
 
@@ -1458,9 +1462,9 @@ document.body.innerHTML = `
     <div class="warnbox" id="stats-warn"></div>
     <div class="grid2">
       <div class="card">
-        <h2>${esc(L.allyLabel)}</h2>
-        <select id="ally"></select>
-        <h2 style="margin-top:16px">相手チャンピオン</h2>
+        ${USE_ALLY ? `<h2>${esc(L.allyLabel)}</h2>
+        <select id="ally"></select>` : ''}
+        <h2 ${USE_ALLY ? 'style="margin-top:16px"' : ''}>相手チャンピオン</h2>
         <div class="row">
           <input type="text" id="enemy-input" list="champ-list" placeholder="名前を入力してEnter">
           <button class="btn" id="enemy-add">追加</button>
@@ -1644,8 +1648,9 @@ const reasonList = (rs) => rs.length
   ? `<ul class="reasons">${rs.map(([k, t]) => `<li class="${k}">${esc(t)}</li>`).join('')}</ul>` : '';
 
 function renderPick() {
-  const { ally, enemies } = LS.pick;
-  $('ally').value = ally;
+  const enemies = LS.pick.enemies;
+  const ally = USE_ALLY ? LS.pick.ally : '';
+  if (USE_ALLY) $('ally').value = ally;
   $('pool-only').checked = LS.poolOnly;
   $('enemy-chips').innerHTML = enemies.map((e, i) =>
     `<span class="chip">${esc(e)}<button data-i="${i}" title="削除">×</button></span>`).join('')
@@ -1677,7 +1682,7 @@ function renderPick() {
   $('verdict-title').textContent = `${LS.champ}を出していい？`;
   const myStat = statOf(me.c) ? `<p class="small">${esc(statLine(statOf(me.c)))}</p>` : '';
   $('verdict').innerHTML = !ally && !enemies.length
-    ? `${myStat}<p class="muted small">${esc(L.allyLabel)}と相手を入れると判定します。</p>`
+    ? `${myStat}<p class="muted small">${USE_ALLY ? `${esc(L.allyLabel)}と` : ''}相手を入れると判定します。</p>`
     : `<div class="verdict ${cls}"><strong>${esc(head)}</strong>
          <div class="muted small">${rank ? `順位 ${rank}位 / ` : ''}スコア ${me.score}</div></div>
        ${myStat}${reasonList(me.reasons)}`;
@@ -1719,11 +1724,11 @@ if (!SINGLE) $('copy-cmd').addEventListener('click', async () => {
   }
   toast('コピーしました');
 });
-$('ally').innerHTML = '<option value="">（未選択）</option>' + L.allies.map((a) => `<option>${esc(a)}</option>`).join('');
+if (USE_ALLY) $('ally').innerHTML = '<option value="">（未選択）</option>' + L.allies.map((a) => `<option>${esc(a)}</option>`).join('');
 $('champ-list').innerHTML = [...new Set([...(ST ? ST.names : []), ...L.allies, ...(L.divers || []), ...(L.immobile || []),
   ...L.champions.flatMap((c) => [c.name, ...c.weakVs, ...c.strongVs])])].sort()
   .map((c) => `<option value="${esc(c)}">`).join('');
-$('ally').addEventListener('change', (e) => { LS.pick.ally = e.target.value; save(); renderPick(); });
+if (USE_ALLY) $('ally').addEventListener('change', (e) => { LS.pick.ally = e.target.value; save(); renderPick(); });
 $('enemy-add').addEventListener('click', addEnemy);
 $('enemy-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') addEnemy(); });
 $('enemy-chips').addEventListener('click', (e) => {
@@ -1933,17 +1938,17 @@ function renderCurrent() {
   if (!g) {
     box.innerHTML = `
       <h2>試合を始める（${esc(LS.champ)}）</h2>
-      <p class="muted small">使用チャンピオンとBAN/PICKの内容（${esc(L.allyLabel)}・相手）が試合に記録されます。</p>
+      <p class="muted small">使用チャンピオンとBAN/PICKの内容（${USE_ALLY ? `${esc(L.allyLabel)}・` : ''}相手）が試合に記録されます。</p>
       <div class="row"><button class="btn primary" id="start-game">試合開始</button></div>`;
     $('start-game').addEventListener('click', () => {
       LS.current = { id: Date.now(), start: Date.now(), champ: LS.champ,
-        ally: LS.pick.ally, enemies: [...LS.pick.enemies], deaths: [] };
+        ally: USE_ALLY ? LS.pick.ally : '', enemies: [...LS.pick.enemies], deaths: [] };
       save(); renderMemo(); toast('試合を開始しました');
     });
     return;
   }
   box.innerHTML = `
-    <h2>試合中のメモ：${esc(g.champ)} <span class="muted small">${esc(fmtDate(g.start))}〜 ／ ${esc(L.allyLabel)}: ${esc(g.ally || '未設定')}
+    <h2>試合中のメモ：${esc(g.champ)} <span class="muted small">${esc(fmtDate(g.start))}〜${USE_ALLY ? ` ／ ${esc(L.allyLabel)}: ${esc(g.ally || '未設定')}` : ''}
       ${g.enemies.length ? ' ／ 相手: ' + esc(g.enemies.join('、')) : ''}</span></h2>
     <div class="grid2">
       <div>
@@ -2030,7 +2035,7 @@ function renderHistory() {
     <details class="game">
       <summary>
         <span class="${g.result === 'win' ? 'win' : 'lose'}">${g.result === 'win' ? '勝ち' : '負け'}</span>
-        ${esc(fmtDate(g.start))} ／ ${esc(g.champ)} ／ ${esc(L.allyLabel)}: ${esc(g.ally || '-')} ／ デス ${g.deaths.length}
+        ${esc(fmtDate(g.start))} ／ ${esc(g.champ)}${USE_ALLY ? ` ／ ${esc(L.allyLabel)}: ${esc(g.ally || '-')}` : ''} ／ デス ${g.deaths.length}
       </summary>
       ${g.enemies.length ? `<p class="small muted">相手: ${esc(g.enemies.join('、'))}</p>` : ''}
       ${g.note ? `<p>${esc(g.note)}</p>` : ''}
