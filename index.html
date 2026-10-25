@@ -1,0 +1,2025 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoLノート トップ</title>
+<style>
+:root {
+  --bg: #0f1218;
+  --panel: #171c25;
+  --panel-2: #1f2632;
+  --border: #2c3544;
+  --text: #e6e9ef;
+  --muted: #8b95a7;
+  --accent: #3ec9a7;
+  --accent-ink: #06231c;
+  --good: #5fd38d;
+  --warn: #f2b84b;
+  --bad: #f06d6d;
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  font-size: 15px; line-height: 1.6;
+}
+header {
+  display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap;
+  padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--panel);
+  position: sticky; top: 0; z-index: 5;
+}
+header h1 { font-size: 16px; margin: 0; }
+header h1 span { color: var(--accent); }
+.champ-select { display: flex; align-items: center; gap: 8px; }
+.champ-select select { width: auto; min-width: 160px; font-size: 16px; font-weight: 700; padding: 6px 10px; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.tab {
+  background: transparent; color: var(--muted); border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 8px; cursor: pointer; font: inherit; font-weight: 600;
+}
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tab kbd { opacity: .6; font-size: 11px; margin-left: 4px; font-family: inherit; }
+main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+section.page { display: none; }
+section.page.active { display: block; }
+.card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 14px;
+}
+.card h2 { font-size: 16px; margin: 0 0 10px; }
+.card h3 { font-size: 14px; margin: 14px 0 6px; color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } nav { margin-left: 0; } }
+label.field { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+select, input[type=text], textarea {
+  width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; font: inherit;
+}
+textarea { min-height: 90px; resize: vertical; }
+select:focus, input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+button.btn {
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 14px; font: inherit; cursor: pointer;
+}
+button.btn:hover { border-color: var(--accent); }
+button.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+button.btn.danger { color: var(--bad); }
+button.btn.sm { padding: 3px 10px; font-size: 13px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.row > input[type=text] { flex: 1; min-width: 160px; width: auto; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--panel-2);
+  border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; font-size: 13px;
+}
+.chip button { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; }
+.chip.toggle { cursor: pointer; user-select: none; }
+.chip.toggle.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.check { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; cursor: pointer; }
+.reco { display: grid; gap: 8px; }
+.reco-item {
+  display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start;
+  background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+}
+.reco-item.top { border-color: var(--accent); }
+.rank { font-size: 18px; font-weight: 800; color: var(--muted); text-align: center; }
+.reco-item.top .rank { color: var(--accent); }
+.reco-name { font-weight: 700; }
+.tag { font-size: 11px; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; margin-left: 6px; }
+.reasons { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
+.reasons li.plus::marker { content: "＋ "; color: var(--good); }
+.reasons li.minus::marker { content: "－ "; color: var(--bad); }
+.side { display: grid; justify-items: end; gap: 6px; }
+.score { font-weight: 800; font-variant-numeric: tabular-nums; }
+.verdict { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+.verdict.ok { border-color: var(--good); }
+.verdict.mid { border-color: var(--warn); }
+.verdict.ng { border-color: var(--bad); }
+.verdict strong { font-size: 16px; }
+.subtabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.subtabs .tab { padding: 12px 18px; font-size: 16px; }
+.cheat ul { margin: 0 0 6px; padding-left: 20px; }
+.cheat li { margin: 4px 0; font-size: 16px; }
+.cheat li b { color: var(--accent); }
+.cheat h3 { font-size: 13px; color: var(--muted); font-weight: 600; }
+.warnbox { border-left: 3px solid var(--warn); padding: 8px 12px; background: var(--panel-2); border-radius: 0 8px 8px 0; margin-bottom: 14px; }
+.warnbox:empty { display: none; }
+.death { border-top: 1px solid var(--border); padding: 8px 0; }
+.death:first-child { border-top: 0; }
+.death .meta { font-size: 12px; color: var(--muted); }
+details.game { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
+details.game summary { cursor: pointer; }
+.win { color: var(--good); font-weight: 700; }
+.lose { color: var(--bad); font-weight: 700; }
+.bar { height: 8px; background: var(--accent); border-radius: 4px; }
+.stat-row { display: grid; grid-template-columns: 1fr 120px 30px; gap: 8px; align-items: center; font-size: 13px; margin: 4px 0; }
+.lanes { display: flex; gap: 8px; }
+.lanes a { color: var(--muted); font-size: 13px; text-decoration: none; border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; }
+.lanes a:hover { color: var(--text); border-color: var(--accent); }
+ul.rich { margin: 0 0 6px; padding-left: 20px; }
+.cheat ul.rich > li { margin: 8px 0; }
+.rich-d { color: var(--muted); font-size: 14px; font-weight: normal; margin-top: 1px; }
+.cheat ul.rich > li > b { color: var(--text); }
+.sec-summary { background: var(--panel-2); border-radius: 8px; padding: 8px 12px; margin: 0 0 10px; }
+.sec-group { margin-top: 12px; }
+.sec-group.good > .vs-label { color: var(--good); }
+.sec-group.bad > .vs-label { color: var(--bad); }
+.sec-group.good, .sec-group.bad { border-left: 3px solid; padding-left: 10px; }
+.sec-group.good { border-color: var(--good); }
+.sec-group.bad { border-color: var(--bad); }
+.build { border: 1px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 15px; }
+.build div { margin: 2px 0; }
+.build details { margin-top: 4px; font-size: 14px; }
+.build summary { cursor: pointer; color: var(--muted); }
+.build ol { margin: 4px 0 0; padding-left: 20px; }
+.cheat h3.common-h { font-size: 14px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 18px; }
+.vs-card { border: 1px solid var(--border); border-radius: var(--radius); margin-top: 14px; padding: 12px 14px; background: var(--bg); }
+.vs-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.vs-card h3 { font-size: 18px; color: var(--text); font-weight: 700; margin: 0; }
+.vs-summary { margin: 6px 0 10px; }
+.vs-label { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 2px; }
+.vs-sec { margin-top: 10px; }
+.vs-sec ul, .vs-sec ol { margin: 0; padding-left: 20px; }
+.cheat .vs-sec li, .cheat .vs-note li { font-size: 15px; }
+.vs-dodge li { margin-bottom: 6px; }
+.vs-note { background: var(--panel-2); border-left: 3px solid var(--accent); padding: 8px 12px; border-radius: 0 8px 8px 0; margin-top: 8px; }
+.vs-note p { margin: 4px 0 0; }
+.vs-flow { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 4px 0 0; }
+.vs-flow dt { font-weight: 700; color: var(--muted); font-size: 13px; padding-top: 2px; }
+.vs-flow dd { margin: 0; }
+@media (max-width: 560px) { .vs-flow { grid-template-columns: 1fr; } .vs-flow dd { margin-bottom: 6px; } }
+.vs-tip { margin-top: 6px; }
+.vs-time { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+@media (max-width: 560px) { .vs-time { grid-template-columns: 1fr; } }
+.vs-time > div { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+.vs-time .go { border-color: var(--good); }
+.vs-time .go .vs-label { color: var(--good); }
+.vs-time .back { border-color: var(--bad); }
+.vs-time .back .vs-label { color: var(--bad); }
+.badge { font-size: 13px; font-weight: 700; border-radius: 999px; padding: 1px 10px; border: 1px solid; }
+.badge.good { color: var(--good); border-color: var(--good); }
+.badge.even { color: var(--warn); border-color: var(--warn); }
+.badge.bad { color: var(--bad); border-color: var(--bad); }
+details.gl { margin: 6px 0 10px; font-size: 14px; }
+details.gl summary { cursor: pointer; color: var(--muted); }
+.gl-row { display: grid; grid-template-columns: 170px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+@media (max-width: 560px) { .gl-row { grid-template-columns: 1fr; gap: 2px; } }
+code { font-family: Consolas, "Courier New", monospace; background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; }
+code.cmd { padding: 6px 10px; font-size: 14px; user-select: all; }
+.steps { padding-left: 20px; margin: 6px 0 0; }
+.steps li { margin: 6px 0; }
+.toast {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: var(--accent-ink); padding: 8px 16px; border-radius: 8px;
+  font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<script>window.LOL_NOTE_SINGLE = true;</script>
+<script>
+// トップのデータ。チャンピオンの追加・相性の修正はこのファイルだけ触ればOK。
+// 名前は Riot 公式の日本語表記（統計と自動で照合する）。
+// great/good: 相性が良い味方ジャングラー / weakVs: 苦手な対面 / strongVs: 得意な対面
+// spike: 自分が強い時間（対面タブに表示）
+// matchupNotes: 対面ごとのメモ { early: Lv1〜3, mid: Lv4〜6, late: Lv6以降・アイテム後, tip: ひとこと }
+// cheat: チャンピオン固有のチートシート（セクションIDは sections と対応）
+//   項目は「文字列」か「[見出し, 説明]」。セクションは配列か { summary, groups: [{ label, tone, items }] }
+//   （tone: good=緑 / bad=赤）。装備の「テンプレ」とスキル上げは LOL.PS の統計から自動で表示
+// よく当たる相手の情報（enemyInfo）は data/top-enemies.js
+window.LANE = {
+  id: 'top',
+  name: 'トップ',
+  allyLabel: '味方ジャングラー',
+  allies: [
+    'リー・シン',
+    'ヴィエゴ',
+    'ヴァイ',
+    'シン・ジャオ',
+    'ジャーヴァンⅣ',
+    'セジュアニ',
+    'ザック',
+    'ノクターン',
+    'グレイブス',
+    'キンドレッド',
+    'エリス',
+    'ニダリー',
+    'リリア',
+    'ダイアナ',
+    'エコー',
+    'ケイン',
+    'カ＝ジックス',
+    'レンガー',
+    'ヘカリム',
+    'ボリベア',
+    'アムム',
+    'ワーウィック',
+    'マオカイ',
+    'アイバーン',
+    'ブライアー',
+    'シャコ',
+    'ラムス',
+    'ウディア',
+  ],
+  sections: [
+    { id: 'strength', label: '強み・強い時間' },
+    { id: 'items', label: '装備' },
+    { id: 'early', label: 'Lv1〜3' },
+    { id: 'lane', label: 'Lv4〜' },
+    { id: 'teamfight', label: '集団戦' },
+    { id: 'combo', label: 'コンボ' },
+  ],
+  common: {
+    strength: [],
+    items: {
+      summary: '装備は <b>勝っている時</b> と <b>負けている時</b> で買い方を変える。迷ったら「まず死なないこと」を優先。',
+      groups: [
+        {
+          label: '✓ 勝っている時',
+          tone: 'good',
+          items: [
+            ['テンプレ通りに買う', '上の「テンプレ」の順番どおりに完成品を買う。リードを広げるための装備'],
+            ['ゴールドが貯まったら早めに帰る', '完成品を早く買うほどリードが広がる。ウェーブを押して、相手のタワーを削ってから帰るとなお良い'],
+            ['相手が防具を固めてきたら防御貫通', '物理なら ブラック クリーバー や セリルダの怨恨 などを早める'],
+          ],
+        },
+        {
+          label: '✕ 負けている時の工夫',
+          tone: 'bad',
+          items: [
+            [
+              'まずは死なないための防具素材',
+              '負けている時に火力を買っても相手を倒せない。相手が物理なら <b>クロース アーマー / チェイン ベスト</b>、魔法なら <b>ヌルマジック マント / ネガトロン クローク</b> を先に',
+            ],
+            ['ブーツを早めに', '物理が多い相手 → <b>プレート スチールキャップ</b>、魔法やCCが多い相手 → <b>マーキュリー ブーツ</b>'],
+            ['少ないゴールドでも素材を買って戻る', 'ゴールドを貯めたまま死ぬと、さらに差が開く。素材1つでも買えば戦いやすくなる'],
+            ['コントロール ワードを1つ', '負けている時ほど相手JGのガンクが来る。自分側の茂みに置いて、来るのを早く見つける'],
+            ['回復の多い相手には重傷素材', '物理なら <b>エクスキューショナー コーリング</b>、タンクなら <b>ブランブル ベスト</b> で回復を減らす'],
+            ['完成品の順番を入れ替える', 'テンプレの1つ目が火力の装備なら、耐久の装備を先にするのも手'],
+          ],
+        },
+        {
+          label: '相手を見て変える',
+          items: [
+            ['相手チームの物理 / 魔法の比率', 'Tab キーでスコアボードを開くと相手の装備が見える。物理が多ければ物理防御、魔法が多ければ魔法防御'],
+            ['CC が多い相手', '<b>マーキュリー ブーツ</b>（CC の時間が短くなる）'],
+          ],
+        },
+      ],
+    },
+    early: [
+      ['ゲーム開始〜1:30', '相手JGの最初の動きを予想する。味方JGが反対側から始めるなら、自分のレーンは狙われやすい'],
+      ['Lv2・Lv3 は先に上がった方が有利', 'Lv2 は最初のウェーブ全部＋2ウェーブ目のミニオン1体くらい。相手より先に上がったら仕掛けるチャンス、遅れたら下がる'],
+      ['ウェーブは自分のタワー寄りに', '自分のタワーに近いほど安全。押しすぎると相手JGに狙われる'],
+      ['3:00前後は相手JGのガンクに注意', 'ミニマップをこまめに見る。相手JGがボット側で見えたら少し安心'],
+      ['相手のサモナースペルを確認', 'TP なら戦いが長引きやすい。イグナイトなら序盤から仕掛けてくる'],
+    ],
+    lane: [
+      ['1回目のリコールはウェーブを押してから', 'ウェーブを相手のタワーに押し込んでから帰ると、戻るまでにミニオンを失いにくい'],
+      ['勝っている時はフリーズ', 'ウェーブを自分のタワー寄りで止めると、相手はファームしにくく、前に出ればガンクされやすい'],
+      ['ヘラルド・ドラゴンの前は味方と合わせる', '出現の1分前にはウェーブを押して、いつでも行ける状態にする'],
+      ['相手の TP を覚えておく', '相手が TP を使ったら、しばらくは他のレーンへ飛んで来られない'],
+      ['相手が見えなくなったらピン', '「見えない」のピンで味方に知らせる'],
+    ],
+    teamfight: [
+      ['自分の役割を決める', 'タンクは前で受け止める・仕掛ける。ファイターは横から相手の後衛を狙う'],
+      ['サイドか、チームと一緒か', '集団戦に間に合わないなら、サイドで相手のタワーを折る方が得なこともある'],
+      ['TP で集団戦に参加', 'TP があれば、離れていても味方の近くへ飛べる'],
+      ['相手の大技を使わせてから入る', '打ち上げなどの大技を使わせた後に入ると勝ちやすい'],
+    ],
+    combo: [['コンボは練習モードで', '試合の前にプラクティスツールで手に馴染ませておく']],
+  },
+  deathReasons: [
+    '相手JGのガンク',
+    '相手の強い時間に戦った',
+    'スキルを避けられなかった',
+    'ウェーブが相手有利の時に戦った',
+    '押しすぎて捕まった',
+    'TPの差で負けた',
+    'サイドで孤立した',
+    '相手のCD・サモナーを見なかった',
+    '集団戦に遅れた',
+  ],
+  divers: [],
+  immobile: [],
+  champions: [
+    {
+      name: 'ジャックス',
+      type: 'ファイター',
+      peel: 1,
+      catch: false,
+      great: [],
+      good: [],
+      weakVs: ['マルファイト', 'フィオラ', 'シンジド', 'ブラッドミア', 'イラオイ'],
+      strongVs: ['ダリウス', 'ナサス', 'チョ＝ガス', 'ボリベア', 'イレリア'],
+      spike: 'Lv6 / 最初の主要アイテム完成 / 2アイテム以降はほぼ全ての相手に強気',
+      matchupNotes: {
+        'ヨネ': {
+          early: 'ヨネは序盤の体力が低い。Q で飛び込み、E で受けながら短く殴る',
+          mid: '刀に風（Q3）が見えたら E を構えて受ける。ヨネの E の戻り先で待つ',
+          late: 'アイテムが揃えばジャックスの方が1対1に強い。サイドで戦う',
+          tip: 'ヨネの E で突っ込まれても深追いしない',
+        },
+        'ガレン': {
+          early: 'ガレンは序盤の殴り合いが強い。回転（E）中は離れる',
+          mid: 'ガレンの Q（強化攻撃）は E で避けられる。回転が終わったら殴る',
+          late: 'ジャックスの方が後半は強い。体力が減ったらガレンの R に注意',
+          tip: 'こまめにちょっかいを出して、ガレンのパッシブ回復を止める',
+        },
+        'ジェイス': {
+          early: 'キャノンでじわじわ削られる。ミニオンの後ろで耐えてファーム',
+          mid: 'ジェイスがハンマーの E（吹き飛ばし）を使ったら Q で飛び込む',
+          late: 'アイテムが揃えばジャックスが有利',
+          tip: 'キャノンの通常攻撃は E で避けられるが、Q の弾（スキル）は避けられない',
+        },
+        'グラガス': {
+          early: 'グラガスの E（体当たり）をミニオンで防ぐ',
+          mid: 'グラガスのダメージはスキル中心で E では避けにくい。E のCD中を狙って飛び込む',
+          late: '魔法防御を1つ入れると戦いやすい',
+          tip: 'E（体当たり）の後が攻め時',
+        },
+        'パンテオン': {
+          early: 'パンテオンが一番強い時間。無理せずファーム',
+          mid: 'パンテオンの盾（E）は正面の攻撃を防ぐ。盾が終わってから殴る',
+          late: '後半はジャックスの方がずっと強い',
+          tip: 'Lv6 までは我慢、その後は強気に',
+        },
+        'マルファイト': {
+          early: 'マルファイトの Q で削られる。無理せずファーム',
+          mid: '物理防御が高いので削りにくい。戦うより押し合いで',
+          late: '防御貫通のアイテムを入れて、サイドで1対1を',
+          tip: '倒せなくても、タワーを折ってサイドで差をつける',
+        },
+        'カ・サンテ': {
+          early: '序盤はジャックスがやや有利。短いトレードを重ねる',
+          mid: 'カ・サンテの W（突進）を E で受ける。R で1対1にされたら E を使って戦う',
+          late: '重傷・防御貫通があると戦いやすい',
+          tip: 'カ・サンテの R 中は防御が下がるので、体力に余裕があれば反撃',
+        },
+        'イレリア': {
+          early: 'イレリアのパッシブ（刃）が溜まる前に短く殴る',
+          mid: 'イレリアの E（2本の刃）を避けて、E で通常攻撃を受ける',
+          late: 'ジャックスが有利。E を合わせれば殴り合いで勝てる',
+          tip: 'イレリアはミニオンを足場にする。ミニオンが少ない時に仕掛ける',
+        },
+        'エイトロックス': {
+          early: 'エイトロックスの Q の先端を避けることに集中',
+          mid: 'Q を避けたら飛び込む。E は Q には効かないので、Q を外させてから',
+          late: 'R 中は離れて、R が終わってから戦う',
+          tip: '重傷があると戦いやすい',
+        },
+        'カミール': {
+          early: '序盤はジャックスがやや有利。カミールが弱い時間に削る',
+          mid: 'カミールの E（壁から飛んでくる）を見たら E を構える',
+          late: 'アイテムが揃えば互角以上',
+          tip: '壁の近くで戦わない',
+        },
+        'ダリウス': {
+          early: 'ダリウスの Q（外側の刃）と E（引き寄せ）を避けてファーム',
+          mid: 'ダリウスの通常攻撃は E で受けられる。E 中に殴り合い、出血が溜まる前に離れる',
+          late: 'Lv6・アイテム後はジャックスが有利',
+          tip: '長い殴り合いを避け、E の時間で勝負する',
+        },
+        'フィオラ': {
+          early: 'フィオラの W（受け流し）は E のスタンを返してくる',
+          mid: 'W を使わせてから E。W のCD中が仕掛け時',
+          late: '1対1はフィオラが強め。集団戦で仕事をする選択肢も',
+          tip: '急所（印）の方向にフィオラを立たせない',
+        },
+        'オラフ': {
+          early: 'オラフの序盤はとても強い。斧を避けてファーム',
+          mid: 'オラフの R 中は E のスタンが効かない。R が終わってから',
+          late: 'アイテムが揃えば互角',
+          tip: '斧が落ちた場所とオラフの間に立つ',
+        },
+        'ガングプランク': {
+          early: 'ガングプランクが弱い序盤に Q で飛び込んで殴る',
+          mid: '樽の近くに立たない。W（オレンジ）を使わせてから E のスタン',
+          late: 'ガングプランクは後半強い。序盤のリードが大事',
+          tip: '樽を先に割ると連鎖を防げる',
+        },
+      },
+      cheat: {
+        strength: {
+          summary: 'ジャックスは <b>後半の1対1</b> が最強クラスのファイター。序盤を乗り切り、アイテムが揃ったらサイドで暴れるのが勝ち方。',
+          groups: [
+            {
+              label: 'スキルの強み',
+              items: [
+                ['E（カウンターストライク）', '武器を回している間、相手の <b>通常攻撃</b> を避ける。もう一度押すか時間切れで周りをスタン。<b>スキルは避けられない</b> ので注意'],
+                ['Q（飛びかかり）', '敵・味方・ワードに飛べる。ワードを置いて飛ぶと逃げにも使える（ワードジャンプ）'],
+                ['W（強化攻撃）', '次の通常攻撃か Q に追加ダメージ。通常攻撃のリセットにもなる'],
+                ['R（グランドマスター）', '持っているだけで3回目の攻撃に追加ダメージ。使うと物理・魔法防御が上がる'],
+                ['パッシブ', '攻撃するたびに攻撃速度が上がる。殴り続けるほど強い'],
+              ],
+            },
+            {
+              label: '◎ 強い時間',
+              tone: 'good',
+              items: [
+                ['最初の主要アイテム完成（トリニティ フォース など）', '一気に殴り合いが強くなる'],
+                ['Lv6', 'R のパッシブで火力が上がる'],
+                ['2アイテム以降', 'ほとんどの相手に1対1で勝てるようになる'],
+              ],
+            },
+            {
+              label: '✕ 弱い時間',
+              tone: 'bad',
+              items: [['Lv1〜3', '序盤の殴り合いが強い相手（ダリウス、レネクトン、パンテオンなど）には無理しない'], ['E を使った直後', 'E のCD中は守りが無い。ここを狙われる']],
+            },
+          ],
+        },
+        items: {
+          summary: '人気ビルドは上の「テンプレ」のとおり。ここでは考え方と、負けている時の工夫。',
+          groups: [
+            {
+              label: '考え方',
+              items: [
+                ['攻撃速度＋攻撃力＋耐久', 'スキルの後の通常攻撃を強くする <b>トリニティ フォース</b> が最初の目安'],
+                ['魔法系を混ぜる型もある', 'W と R は魔法ダメージ。人気ビルドに <b>ゾーニャの砂時計</b> が入るのはそのため'],
+              ],
+            },
+            {
+              label: '✓ 勝っている時',
+              tone: 'good',
+              items: [['テンプレ通り', '火力の装備を先に買ってリードを広げる'], ['サイドを押す', '1対1で勝てる装備になったら、サイドでタワーを折る']],
+            },
+            {
+              label: '✕ 負けている時の工夫',
+              tone: 'bad',
+              items: [
+                ['火力より先に防具素材', '相手が物理なら <b>チェイン ベスト</b>、魔法なら <b>ネガトロン クローク</b>。耐久が無いと飛び込んでもすぐ倒れる'],
+                ['耐久の付く装備を早める', '<b>ステラックの篭手</b> や <b>デス ダンス</b> を2つ目より前に'],
+                ['ゾーニャの砂時計で生き残る', '飛び込んでから使うと、相手のスキルを空振りさせられる'],
+                ['ファームで追いつく', 'ジャックスは後半に強い。死なずにCSを取り続ければ逆転できる'],
+              ],
+            },
+            {
+              label: '相手を見て変える',
+              items: [
+                ['回復の多い相手（エイトロックス、ダリウスなど）', '<b>ケミパンク チェーンソード</b> などの重傷'],
+                ['物理が多い', '<b>プレート スチールキャップ</b>'],
+                ['CC が多い', '<b>マーキュリー ブーツ</b>'],
+              ],
+            },
+          ],
+        },
+        early: [
+          ['Lv1 は E（または Q）', '相手が通常攻撃で殴ってくるタイプなら E を取ると、殴り合いを受け止められる'],
+          ['相手が殴りに来たら E', 'E を構えると相手の通常攻撃が当たらない。E が終わる瞬間に周りをスタン'],
+          ['E を使った後は下がる', 'E のCD中は守りが無い。もう一度使えるまで無理しない'],
+          ['W で確実にラストヒット', 'W は通常攻撃のリセット。とどめに使うとCSを落としにくい'],
+        ],
+        lane: [
+          ['基本のトレード: E → Q → W', 'E を構えて Q で飛び込み、W で殴る。スタンが入ったらすぐ離れる'],
+          ['Lv6 からは長めの殴り合いもOK', 'R のパッシブで3回目の攻撃が強くなる'],
+          ['ワードジャンプで逃げる', 'ワードを置いて Q で飛ぶ。壁越えにも使える'],
+          ['1アイテム完成後はサイドを押す', '相手が1人で止めに来たら1対1、2人で来たら逃げて、その間に味方がオブジェクトを取る'],
+        ],
+        teamfight: [
+          ['相手の後衛を狙う', 'Q で飛び込み、E で周りをスタン'],
+          ['R を使ってから入る', 'R で防御が上がり、倒れにくくなる'],
+          ['サイドで2人引きつけたら勝ち', 'その間に味方が4対3で戦える'],
+          ['E は ADC の攻撃に合わせる', 'E は通常攻撃しか避けられない。ADC に殴られている時に使うと効果が大きい'],
+        ],
+        combo: [['E → Q → W → E（再発動）', '飛び込んですぐスタン。基本のコンボ'], ['W → Q', 'W で強化した Q で飛び込む'], ['ワード → Q', 'ワードジャンプ。逃げや壁越えに']],
+      },
+    },
+    {
+      name: 'ドクター・ムンド',
+      type: 'タンク',
+      peel: 1,
+      catch: false,
+      great: [],
+      good: [],
+      weakVs: ['イレリア', 'グウェン', 'トリンダメア', 'モルデカイザー', 'ダリウス'],
+      strongVs: ['マルファイト', 'ティーモ', 'ジェイス', 'フィオラ'],
+      spike: 'Lv6（R）/ タンクアイテム1〜2個 / 後半はさらに硬い',
+      matchupNotes: {
+        'マルファイト': { early: '序盤から Q で削り続けられる', mid: 'Q は体力の割合でダメージが出るので、硬いマルファイトにも効く', late: '強気に殴り合ってよい', tip: 'データ上かなり有利な相手' },
+        'ヨネ': {
+          early: 'ヨネの Q を受けすぎない。Q でラストヒット',
+          mid: 'ヨネの Q3（竜巻）と R を避けて、R の回復で耐える',
+          late: 'タンクアイテムが揃えば止まらない',
+          tip: '重傷を持ったヨネには注意',
+        },
+        'エイトロックス': { early: 'エイトロックスの Q を避けることに集中', mid: '回復勝負になる。重傷を早めに', late: 'R 中のエイトロックスとは戦わない', tip: 'データ上は不利。無理せずファーム' },
+        'ジェイス': {
+          early: 'ジェイスのポークを受けても W と R の回復で取り返せる',
+          mid: 'Q で削り合い。ジェイスがハンマーで来たら W を溜めて返す',
+          late: 'ムンドの方が後半強い',
+          tip: 'データ上は有利',
+        },
+        'ジャックス': {
+          early: 'ジャックスの E 中は通常攻撃が当たらない。Q などスキルで削る',
+          mid: 'ジャックスの E のCD中に殴り合う',
+          late: '後半の1対1はジャックスが強い。集団戦で仕事',
+          tip: 'ムンドの Q はスキルなので、ジャックスの E でも避けられない',
+        },
+        'パンテオン': { early: 'パンテオンが一番強い時間。Q でファームして耐える', mid: 'Lv6 以降は R の回復で殴り合える', late: 'ムンドの方が後半強い', tip: '序盤は我慢、Lv6 から反撃' },
+        'グウェン': {
+          early: 'グウェンの Q（溜めた中心）を避ける',
+          mid: '霧（W）の中に入らないと攻撃が当たらない。無理に戦わない',
+          late: '集団戦で前に出て仕事をする',
+          tip: 'データ上かなり不利。ファーム優先',
+        },
+        'ガングプランク': {
+          early: '樽の近くに立たない。Q でファーム',
+          mid: 'Lv6 以降は殴り合える。樽を割りながら戦う',
+          late: 'ガングプランクも後半強い。ファーム勝負',
+          tip: '樽の連鎖に巻き込まれない位置で',
+        },
+        'レネクトン': { early: 'レネクトンの怒りが溜まっている時は戦わない', mid: 'Lv6 以降、R の回復で殴り合える', late: 'ムンドの方が後半強い', tip: 'ほぼ互角。序盤を耐えれば勝てる' },
+        'ダリウス': {
+          early: '序盤は不利。Q でファームして、出血を溜めさせない',
+          mid: 'Lv6 とタンクアイテムがあれば殴り合える',
+          late: 'ダリウスの R に注意しつつ集団戦で前に',
+          tip: 'ダリウスの重傷（アイテム）に注意',
+        },
+        'ティーモ': { early: 'ティーモの毒は痛いが、W と R の回復で取り返せる', mid: 'Q で削り返す。キノコはオラクルレンズで消す', late: 'ムンドが有利', tip: 'データ上は有利' },
+        'ナサス': {
+          early: 'ナサスは序盤弱い。Q で削って Q のスタックを邪魔',
+          mid: 'ナサスの W（スロウ）の後の Q に注意',
+          late: 'ナサスは後半とても強い。序盤のうちに差をつける',
+          tip: '序盤に強く出る',
+        },
+      },
+      cheat: {
+        strength: {
+          summary: 'ムンドは <b>倒れない</b> タンク。序盤は耐えて、Lv6 とタンク装備が揃ったら前に出て受け止めるのが仕事。',
+          groups: [
+            {
+              label: 'スキルの強み',
+              items: [
+                ['Q（包丁）', '遠くから当てると、相手の体力の割合でダメージ＋スロウ。体力が多い相手ほど痛い。体力を使うが、当てると一部戻る'],
+                ['W（心臓ショック）', '受けたダメージの一部を溜めて、もう一度押すと回復'],
+                ['E（鈍器）', '次の通常攻撃が強くなる。自分の体力が減っているほど痛い'],
+                ['R（最大投与）', '体力がどんどん回復し、移動速度が上がる'],
+                ['パッシブ', '最初の CC を無効化（容器が落ちる。拾うと復活）。体力の自然回復が高い'],
+              ],
+            },
+            {
+              label: '◎ 強い時間',
+              tone: 'good',
+              items: [['Lv6', 'R の回復で殴り合いを長く続けられる'], ['タンク装備1〜2個', 'ほとんどの相手の攻撃に耐えられる'], ['後半', '体力が多くなるほど、Q も回復も強くなる']],
+            },
+            {
+              label: '✕ 弱い時間',
+              tone: 'bad',
+              items: [
+                ['Lv1〜5', '序盤が強い相手（ダリウス、パンテオンなど）には無理しない'],
+                ['R が無い時', '回復が少ないので長い殴り合いは避ける'],
+                ['相手が重傷を持った時', '回復が減るので、無理に前に出ない'],
+              ],
+            },
+          ],
+        },
+        items: {
+          summary: '人気ビルドは上の「テンプレ」のとおり。ムンドは <b>体力を盛るほど強い</b>（回復や E のダメージが体力で伸びる）。',
+          groups: [
+            {
+              label: '考え方',
+              items: [['体力が一番大事', '体力の多い装備を優先する'], ['心の鋼は殴れる時に伸びる', '相手チャンピオンを殴るたびに体力が永久に増える。殴り合いができる時に強い']],
+            },
+            {
+              label: '✓ 勝っている時',
+              tone: 'good',
+              items: [['テンプレ通り', '<b>心の鋼</b> → <b>ワーモグ アーマー</b> で体力を一気に伸ばす'], ['殴りに行く', '心の鋼のスタックを溜めるため、積極的に相手を殴る']],
+            },
+            {
+              label: '✕ 負けている時の工夫',
+              tone: 'bad',
+              items: [
+                ['まず安い体力・防具', '<b>ルビー クリスタル</b> や <b>ジャイアント ベルト</b> で体力、相手に合わせて防具素材'],
+                ['物理の相手なら ブランブル ベスト', '防具＋殴ってきた相手の回復を減らす＋ダメージを返す'],
+                ['魔法の相手なら スピリット ビサージュ', '魔法防御に加えて回復量も上がる。ムンドと相性が良い'],
+                ['心の鋼より防具を先に', '殴れない状況では心の鋼が伸びない。耐久を先に'],
+              ],
+            },
+            {
+              label: '相手を見て変える',
+              items: [
+                ['物理が多い', '<b>ソーンメイル</b> や <b>ランデュイン オーメン</b>'],
+                ['魔法が多い', '<b>スピリット ビサージュ</b> や <b>自然の力</b>'],
+                ['CC が多い', '<b>マーキュリー ブーツ</b>'],
+              ],
+            },
+          ],
+        },
+        early: [
+          ['Lv1 は Q', 'Q でラストヒットとポーク'],
+          ['無理に戦わず Q でファーム', 'Q は遠くからとどめを刺せる。近づくと危ない相手には特に便利'],
+          ['Q を外しすぎない', 'Q は体力を使う。外すと体力だけ減る'],
+          ['パッシブの容器を拾う', 'CC を受けると容器が落ちる。拾えばまた CC を無効化できる。相手に壊される前に'],
+          ['序盤が強い相手にはタワー寄りで', 'ダリウス、パンテオン、レネクトンなど'],
+        ],
+        lane: [
+          ['Lv6 から強気に', 'R の回復で殴り合いを長く続けられる'],
+          ['W で溜めて回復', '相手の攻撃を受けている時に W → 少し後に W をもう一度押して回復'],
+          ['E はトレードの締めに', '自分の体力が減っているほど強い'],
+          ['TP でボットやドラゴンへ', 'ムンドは硬いので、TP で集団戦に入ると強い'],
+        ],
+        teamfight: [
+          ['前に立って受け止める', '相手のスキルを受けて味方を守る'],
+          ['R は集団戦が始まったらすぐ', '回復しながら前に出続ける'],
+          ['Q で逃げる相手を止める', 'スロウで味方が追いつける'],
+          ['相手の後衛まで歩いていく', 'パッシブで最初の CC を受けても止まらない'],
+        ],
+        combo: [['Q → 近づいて E', 'スロウで近づいて、強化した通常攻撃'], ['W → 殴り合い → W（再発動）', 'ダメージを溜めて回復に変える'], ['R → 前に出る', '回復と移動速度で一気に前へ']],
+      },
+    },
+    {
+      name: 'チョ＝ガス',
+      type: 'タンク',
+      peel: 2,
+      catch: false,
+      great: [],
+      good: [],
+      weakVs: ['ジャックス', 'ナー', 'パンテオン', 'ジェイス', 'フィオラ'],
+      strongVs: ['ガレン', 'ヨリック', 'サイオン', 'イレリア', 'ヤスオ'],
+      spike: 'Lv3（Q+W+E）/ Lv6（R）/ R のスタックが溜まった後半',
+      matchupNotes: {
+        'ヨリック': { early: 'グールを Q と E でまとめて倒す', mid: 'W の沈黙でヨリックのスキルを止める', late: 'R をヨリックに使うか、メイデンを倒すか判断', tip: 'データ上は有利' },
+        'ヨネ': {
+          early: 'ヨネの Q を受けすぎない。パッシブでミニオンを倒して回復',
+          mid: 'ヨネが E で突っ込んできたら Q と W で止める',
+          late: 'R のスタックを溜めて硬くなる',
+          tip: 'ほぼ互角',
+        },
+        'ジャックス': {
+          early: '無理せずファーム。ジャックスに近づかれたら W の沈黙で止める',
+          mid: 'ジャックスの E 中は Q → W で止めて距離を取る（E は通常攻撃しか避けない）',
+          late: '後半の1対1は不利。集団戦で仕事',
+          tip: 'データ上かなり不利。無理に戦わない',
+        },
+        'ガングプランク': { early: 'ガングプランクが弱い序盤に Q で削る', mid: '樽の近くには立たない。W（オレンジ）を使わせてから Q', late: 'R のスタックを溜めて硬くなる', tip: 'データ上は有利' },
+        'ジェイス': {
+          early: 'ジェイスのポークで削られやすい。ミニオンの後ろで耐える',
+          mid: 'ジェイスがハンマーで近づいてきたら Q → W で反撃',
+          late: 'ジェイスは後半落ちるので耐えて集団戦へ',
+          tip: 'データ上は不利。序盤は我慢',
+        },
+        'マルファイト': {
+          early: 'Q で削り合い。互いに硬いのでファーム勝負',
+          mid: 'R はミニオン・モンスターでもスタックが溜まる。体力で上回る',
+          late: '集団戦でマルファイトの R の後に Q を合わせる',
+          tip: 'データ上は有利',
+        },
+        'エイトロックス': { early: 'エイトロックスの Q の先端を避けることに集中', mid: 'W の沈黙で Q の連続攻撃を止める', late: 'R 中のエイトロックスとは戦わない', tip: 'データ上は不利' },
+        'イレリア': { early: 'イレリアが近づいてきたら Q → W で止める', mid: 'W の沈黙でイレリアの Q（ダッシュ）を止められる', late: '体力が増えれば殴り合える', tip: 'データ上は有利' },
+        'サイオン': { early: 'サイオンの溜め Q を W の沈黙で止める', mid: 'Q で削り合い。互いに硬い', late: 'R でスタックを溜めて体力で上回る', tip: 'データ上は有利' },
+        'カ・サンテ': { early: 'カ・サンテの W（溜め突進）を Q で止める', mid: 'R で1対1にされたら W で沈黙させて時間を稼ぐ', late: '互いにタンク。集団戦で仕事', tip: 'ほぼ互角' },
+        'ナー': {
+          early: '小ナーのブーメランで削られる。ミニオンの後ろで耐える',
+          mid: 'メガナーの時は壁際に立たない。変身が終わった直後を狙う',
+          late: '集団戦でメガナーの R に注意',
+          tip: 'データ上は不利',
+        },
+        'パンテオン': {
+          early: 'パンテオンが一番強い時間。無理せずファーム',
+          mid: 'パンテオンの盾（E）は正面の攻撃を防ぐ。終わってから Q',
+          late: '後半はチョ＝ガスの方が強い',
+          tip: 'データ上は不利。序盤は我慢',
+        },
+      },
+      cheat: {
+        strength: {
+          summary: 'チョ＝ガスは <b>食べるほど大きくなる</b> タンク。R でキルを取るたびに体力が増え、後半は倒れにくくなる。',
+          groups: [
+            {
+              label: 'スキルの強み',
+              items: [
+                ['Q（地割れ）', '少し遅れて地面から打ち上げ＋スロウ'],
+                ['W（咆哮）', '扇状に沈黙。相手のスキルやダッシュを止める'],
+                ['E（棘）', '次の通常攻撃が棘の範囲攻撃になる'],
+                ['R（捕食）', 'チャンピオンには <b>真ダメージ</b>。体力が少ない相手はほぼ確実に倒せる。倒すと最大体力が増える（スタック）'],
+                ['パッシブ', 'ユニットを倒すと体力とマナが回復'],
+              ],
+            },
+            {
+              label: '◎ 強い時間',
+              tone: 'good',
+              items: [['Lv3', 'Q・W・E が揃って、止めながら殴れる'], ['Lv6', 'R で相手を倒せる体力ラインが生まれる'], ['R のスタックが溜まった後半', '体が大きく硬くなる']],
+            },
+            {
+              label: '✕ 弱い時間',
+              tone: 'bad',
+              items: [['遠くから削ってくる相手', 'ジェイスやナーなどには近づく前に削られる'], ['Q を外した後', '相手を止める手段が少なくなる']],
+            },
+          ],
+        },
+        items: {
+          summary: '人気ビルドは上の「テンプレ」のとおり。今のパッチでは <b>心の鋼 に魔法（AP）系を混ぜる型</b> が人気（スタートも ドラン リング）。タンク型でもOK。',
+          groups: [
+            {
+              label: '考え方',
+              items: [['体力＋魔法', 'Q・W・E は魔法ダメージ。体力の装備と魔法の装備を混ぜると、硬さと火力を両立できる'], ['タンク型も強い', '負けている時や、相手に強い前衛がいる時はタンク装備だけでもOK']],
+            },
+            {
+              label: '✓ 勝っている時',
+              tone: 'good',
+              items: [['テンプレ通り', '<b>心の鋼</b> → <b>終わりなき絶望</b> など'], ['R のスタックを積極的に', 'キルを取るほど体力が増える']],
+            },
+            {
+              label: '✕ 負けている時の工夫',
+              tone: 'bad',
+              items: [
+                ['魔法系より防具を先に', '魔法の装備は倒しに行くための装備。負けている時は <b>ソーンメイル</b>（物理相手）や <b>自然の力</b>（魔法相手）など耐久を先に'],
+                ['ルビー クリスタルで体力', '安く買えて、すぐ硬くなる'],
+                ['R のスタックを安全に溜める', 'R は大砲ミニオンや大型モンスターにも使える。安全にスタックを溜めて、体力で取り返す'],
+              ],
+            },
+            {
+              label: '相手を見て変える',
+              items: [
+                ['物理が多い', '<b>プレート スチールキャップ</b>、<b>ソーンメイル</b>、<b>ランデュイン オーメン</b>'],
+                ['魔法が多い', '<b>マーキュリー ブーツ</b>、<b>自然の力</b>'],
+              ],
+            },
+          ],
+        },
+        early: [
+          ['Q は相手の移動先に置く', '少し遅れて発生するので、相手が近づいてくる場所やミニオンを取りに来る場所へ'],
+          ['パッシブで回復しながら', 'ミニオンを倒すと回復する。体力が減っても粘れる'],
+          ['Q を外したら仕掛けない', 'Q が無いと相手を止められない'],
+          ['相手の仕掛けには W', 'ダッシュしてきたら W の沈黙で止める'],
+        ],
+        lane: [
+          ['Lv6 からは R で倒せる体力を意識', '相手の体力が少なくなったら R でとどめ'],
+          ['R をミニオン・モンスターにも', '大砲ミニオンやモンスターで安全にスタックを溜める'],
+          ['ドラゴン・バロンのとどめに R', 'R は真ダメージなので、オブジェクトを奪える'],
+          ['E の通常攻撃でトレード', 'Q が当たったら E で殴る'],
+        ],
+        teamfight: [
+          ['前に出て Q + W', '相手をまとめて止める'],
+          ['R はとどめか、オブジェクトに', '相手のキャリーを確実に倒すか、ドラゴン・バロンを奪う'],
+          ['スタックが溜まると硬くなる', '後半は相手の後衛まで歩いて行ける'],
+        ],
+        combo: [['Q → W', '打ち上げ中に沈黙'], ['フラッシュ → Q', '届かない距離から一気に打ち上げ'], ['Q → W → E → R', '止めて殴って、R でとどめ']],
+      },
+    },
+  ],
+};
+</script>
+<script>
+// トップでよく当たる相手の情報（チートシートの「対面」タブに表示）。
+// 名前は Riot 公式の日本語表記。項目はすべて任意（書いた分だけ表示される）。
+//   role: 種類 / summary: どんなチャンピオンか（一言） / strength: 強み
+//   dodge: 気をつけるスキル [スキル, 見分け方と避け方] / howto: 戦い方
+//   goTime: 強気に出ていい時間 / backTime: 引くべき時間 / items: 相手に効く装備の系統
+window.LANE.enemyInfo = {
+  'ヨネ': {
+    role: 'ファイター',
+    summary: '刀2本で戦う近接剣士。3回目の Q が竜巻になり、E で魂だけ突っ込んで元の位置に戻る。',
+    strength: ['Q3（竜巻）で打ち上げてからのコンボ', 'E で突っ込んでも元の位置に戻れるので、深追いすると逆にやられる', 'アイテムが揃うと火力がとても高い'],
+    dodge: [
+      ['Q3（竜巻の突進）', '刀の周りに風がまとわりついたら、次の Q が竜巻。前に一直線に飛んでくるので横に動く'],
+      ['R（突進して引き寄せ）', 'Lv6 から。一直線の大技なので、ヨネの正面に立たない'],
+      ['E（魂の突撃）', 'E 中に受けたダメージの一部が後でもう一度来る。時間切れでヨネが元の位置に戻るので追いかけない'],
+    ],
+    howto: ['刀に風が付いていない時（竜巻が無い時）に殴る', 'E で突っ込んできたら、戻る先（元の位置）で待ち構える', '序盤は体力と防御が低いので、Lv1〜5 のうちに削っておく'],
+    goTime: 'Lv1〜5。Q3 と E を使った直後',
+    backTime: 'Lv6 以降で R がある時。アイテム2つ以降',
+    items: '物理と魔法の両方のダメージを出すので、体力が多い防具',
+  },
+  'ジェイス': {
+    role: 'ポーク / ファイター',
+    summary: '遠距離のキャノンと近距離のハンマーを切り替えて戦う。遠くから削るのが得意。',
+    strength: ['キャノンの Q（加速ゲートを通すと強化）で遠くから削る', 'ハンマーに切り替えて飛び込み（Q）、吹き飛ばし（E）', '序盤〜中盤が強く、リードを作りやすい'],
+    dodge: [
+      ['キャノン Q（エネルギー弾）', 'ゲート（E）を通った弾は大きく速くなる。ミニオンの後ろに立つと先にミニオンに当たる'],
+      ['ハンマー E（吹き飛ばし）', '近づいた時に吹き飛ばされる。壁際に立たない'],
+    ],
+    howto: ['ミニオンの後ろに立って弾を避ける', '体力が多いうちに一気に近づいて戦い切る', '無理に戦わず、ジェイスが弱くなる後半を待つのも手'],
+    goTime: 'ジェイスがスキルを外した直後。Lv6 以降（近接チャンピオンが追いつきやすい）',
+    backTime: 'Lv1〜3。体力が削られている時',
+    items: '物理防御、体力回復',
+  },
+  'ジャックス': {
+    role: 'ファイター',
+    summary: '街灯（武器）で戦う近接ファイター。後半の1対1がとても強い。',
+    strength: ['E で通常攻撃を回避し、終わると周りをスタン', 'Q で敵・味方・ワードに飛べる', 'アイテムが揃うと1人でサイドを押して戦える'],
+    dodge: [
+      ['E（カウンターストライク）', '武器をくるくる回している間は通常攻撃が当たらない。終わるとスタンが来るので、回り始めたら離れる'],
+      ['Q（飛びかかり）', '距離を一気に詰めてくる。E と組み合わせてくる'],
+    ],
+    howto: ['E を使ったのを見てから離れ、E が切れている時に戦う', 'スキルのダメージは E で避けられないので、スキル主体で戦う', '序盤のうちにリードを作り、後半の1対1は避ける'],
+    goTime: 'E を使った直後。序盤のアイテムが無い時',
+    backTime: 'E がある時。2アイテム以降の1対1',
+    items: '物理防御（攻撃速度を下げる効果付きも有効）',
+  },
+  'マルファイト': {
+    role: 'タンク',
+    summary: '岩の体の硬いタンク。物理防御がとても高い。',
+    strength: ['物理防御が高く、物理ダメージで削りにくい', 'Q で移動速度を奪い、逃げにくくする', 'R（範囲の打ち上げ突進）は集団戦の大技'],
+    dodge: [
+      ['Q（岩の投げつけ）', '対象指定のスロウで避けられない。Q の後に近づかれる距離にいない'],
+      ['R（突進して範囲打ち上げ）', 'Lv6 から。集団戦では味方と固まりすぎない'],
+    ],
+    howto: ['物理チャンピオンなら防御貫通の装備を', 'マルファイトの火力は低め。無理に倒そうとせずファームで差をつける', 'ダメージは魔法が多いので、魔法防御も効く'],
+    goTime: 'E（範囲の叩きつけ）を使った直後',
+    backTime: '物理防御アイテムが揃った後（倒しにくくなる）',
+    items: '魔法防御（物理チャンピオンなら防御貫通も）',
+  },
+  'パンテオン': {
+    role: 'ファイター',
+    summary: '盾と槍の戦士。序盤の殴り合いがとても強い。',
+    strength: ['W で飛び込んでスタン', 'Q の投げ槍で削る。溜めるとさらに遠くまで飛ぶ', 'E で正面からの攻撃を防ぐ'],
+    dodge: [
+      ['W（飛び込みスタン）', '対象指定なので避けられない。W の届く距離に入らない'],
+      ['Q（投げ槍）', '直線の投げ槍。横に動いて避ける'],
+      ['E（盾）', '構えている間は正面からの攻撃が効かない。終わるまで待つ'],
+    ],
+    howto: ['Lv1〜6 は無理に戦わずファーム優先', '頭の上のマークが溜まっている（スキルが強化される）時は特に注意', '後半になるとパンテオンは弱くなる'],
+    goTime: 'W と E を使った直後。後半',
+    backTime: 'Lv1〜6。強化スキルの準備ができている時',
+    items: '物理防御',
+  },
+  'ガングプランク': {
+    role: 'ファイター（後半型）',
+    summary: '海賊。樽を爆発させて削る。後半に強い。',
+    strength: ['E の樽を連鎖爆発させて大ダメージ', 'Q（銃撃）で遠くから削る', 'W でCCを解除して回復', 'R は全体スキル（他のレーンにも撃てる）'],
+    dodge: [
+      ['E（樽の爆発）', '樽が置かれたらその周りに立たない。体力が少ない樽は自分の通常攻撃で割れる'],
+      ['Q（銃撃）', '対象指定で避けられない。樽と組み合わさると痛い'],
+    ],
+    howto: ['序盤（樽が少ない時）に攻める', '樽の周りに立たない、割れる樽は先に割る', 'W（オレンジ）でCCを解除されるので、CCは W を使わせた後に'],
+    goTime: 'Lv1〜5。樽と W を使った直後',
+    backTime: '2〜3アイテム以降',
+    items: '物理防御',
+  },
+  'エイトロックス': {
+    role: 'ファイター',
+    summary: '大剣を振る近接ファイター。回復しながら戦う。',
+    strength: ['Q は3回振れる大技。先端に当たると痛く、打ち上げられる', 'パッシブと R で回復しながら戦う', 'R 中は移動速度と回復量が上がる'],
+    dodge: [
+      ['Q（3段の大剣）', '地面に当たる範囲が表示される。先端の部分を避けて、エイトロックスにくっつくか範囲の外へ'],
+      ['W（鎖）', '鎖が当たると少し後に中心へ引き戻される。鎖の範囲からすぐ出る'],
+    ],
+    howto: ['Q を全部避けたら反撃のチャンス', '回復が多いので重傷を早めに', 'R 中は戦わず離れる'],
+    goTime: 'Q を外した直後。R が終わった後',
+    backTime: 'R 中。Lv6 以降で体力が減っている時',
+    items: '重傷、物理防御',
+  },
+  'カ・サンテ': {
+    role: 'タンク',
+    summary: '大きな盾を持つタンク。R を使うと防御を捨てて攻撃型になる。',
+    strength: ['W（溜めて突進）で打ち上げ', '3回目の Q で引き寄せ', 'R で相手を後ろに蹴り飛ばして、1対1に持ち込む'],
+    dodge: [
+      ['W（溜めの突進）', '構えてから突進してくる。突進の方向から横へ'],
+      ['Q3（引き寄せ）', '3回目の Q は衝撃波で引き寄せてくる。直線上に立たない'],
+    ],
+    howto: ['R 中は攻撃力が上がるが防御が下がる。体力に余裕があれば反撃のチャンス', '序盤はファーム優先', '回復阻害（重傷）も有効'],
+    goTime: 'W のCD中。R が終わった後',
+    backTime: 'R で1対1にされた直後（体力が少ない時）',
+    items: '物理防御',
+  },
+  'イレリア': {
+    role: 'ファイター',
+    summary: '刃を操る剣士。ミニオンを足場に何度もダッシュしてくる。',
+    strength: ['Q のダッシュは、とどめを刺すか印のある敵に当てるとリセット', 'パッシブ（周りを回る刃）が溜まると攻撃速度が上がる', 'E の2本の刃でスタン'],
+    dodge: [
+      ['E（2本の刃）', '1本目を置いてから2本目を置くと、間にいる敵がスタン。刃と刃の間に入らない'],
+      ['R（刃の波）', 'Lv6 から。当たると印が付き、Q が何度も飛んでくる'],
+    ],
+    howto: ['パッシブが溜まっている（刃が4つ回っている）時は戦わない', 'ミニオンの体力が低いと Q で飛び回られる。ミニオンが少ない時に戦う', 'E を避けたら反撃'],
+    goTime: 'パッシブが溜まっていない時。E を外した直後',
+    backTime: 'ミニオンが多い時。Lv6 以降',
+    items: '重傷、物理防御（攻撃速度を下げる効果付きも有効）',
+  },
+  'カミール': {
+    role: 'ファイター',
+    summary: '機械の脚を持つ女性剣士。壁から飛んできて攻撃する。',
+    strength: ['E で壁にフックをかけて飛んできてスタン', 'R で相手を円の中に閉じ込める', '序盤は弱いが、アイテムが揃うと1対1が強い'],
+    dodge: [
+      ['E（壁からのフック）', '壁にフックがかかった後に飛んでくる。壁から離れて戦う'],
+      ['W（扇状の攻撃）', '外側に当たるとスロウと回復を許す。カミールにくっつくか、範囲の外へ'],
+      ['R（隔離）', 'Lv6 から。円の中に閉じ込められる'],
+    ],
+    howto: ['壁沿いで戦わない', 'E を外させてから反撃', '序盤は弱いので早めにリードを作る'],
+    goTime: 'Lv1〜5（アイテムが無い時）。E を外した後',
+    backTime: '最初の主要アイテム完成後。Lv6 以降',
+    items: '物理防御',
+  },
+  'ダリウス': {
+    role: 'ファイター',
+    summary: '斧で戦う近接ファイター。長く殴り合うほど強くなる。',
+    strength: ['攻撃するたびに出血を付け、5回重ねると大幅に強くなる', 'Q の外側の刃で回復する', 'R（ギロチン）で倒すと、もう一度 R を使える'],
+    dodge: [
+      ['Q（斧の大振り）', '少し溜めてから周りを薙ぎ払う。外側の刃が当たると痛い。溜めが見えたらダリウスにくっつくか、離れる'],
+      ['E（引き寄せ）', '前にいる敵を引き寄せる。射程ぎりぎりに立たない'],
+      ['R（ギロチン）', '出血が溜まっているほど痛い。体力が減ったら下がる'],
+    ],
+    howto: ['出血（赤いマーク）が溜まる前に離れる。長い殴り合いはしない', 'E を使わせてから戦う', '回復が多いので重傷を早めに'],
+    goTime: 'E を使った直後',
+    backTime: '出血が3つ以上溜まっている時。Lv6 以降で体力が減っている時',
+    items: '物理防御、重傷',
+  },
+  'フィオラ': {
+    role: 'ファイター',
+    summary: 'レイピアの決闘者。1対1がとても強い。',
+    strength: ['相手の周りに出る急所を突くと、真ダメージと回復', 'W（受け流し）で攻撃を受け止め、CCを返す', 'R で4つの急所を全部突くと、周りの味方が回復'],
+    dodge: [
+      ['W（受け流し）', '構えている間に当てたCCは返される。構えを見たらCCを撃たない'],
+      ['Q（突き）', '短いダッシュで急所を突きに来る'],
+      ['R（4つの急所）', 'Lv6 から。全部突かれる前に離れる'],
+    ],
+    howto: ['急所（自分の周りの印）の方向にフィオラを立たせない', 'W を使わせてからCC', '1対1がとても強いので、無理せずファームも選択肢'],
+    goTime: 'W を使った直後',
+    backTime: 'Lv6 以降。アイテムが揃った後',
+    items: '物理防御',
+  },
+  'オラフ': {
+    role: 'ファイター',
+    summary: '斧を投げるバイキング。序盤からとても強い。',
+    strength: ['Q の斧投げでスロウ。斧を拾うとすぐ投げ直せる', 'R 中はCCが効かない', '体力が低いほど攻撃速度が上がる'],
+    dodge: [
+      ['Q（斧投げ）', '直線の斧。当たるとスロウ。斧が落ちた場所とオラフの間に立って、拾わせない'],
+      ['R（狂戦士化）', 'Lv6 から。CC が効かなくなる。R 中は離れる'],
+    ],
+    howto: ['斧を拾わせない位置に立つ', 'R 中は戦わず、終わってから', '体力が低いほど強いので、とどめは一気に'],
+    goTime: 'R が終わった後。斧を拾えない時',
+    backTime: 'Lv1〜6（序盤が強い）。R 中',
+    items: '物理防御、重傷',
+  },
+  'グラガス': {
+    role: 'タンク / 魔法',
+    summary: '酒樽を投げる大男。体当たりと酒樽で戦う。',
+    strength: ['Q（酒樽）を置いて爆発させる', 'E（体当たり）でスタン', 'R（大きな樽）で吹き飛ばす', 'W（飲む）で受けるダメージを減らす'],
+    dodge: [
+      ['E（体当たり）', '直線の突進で、当たると打ち上げ。ミニオンの後ろに立つと先にミニオンに当たって止まる'],
+      ['R（爆発する樽）', 'Lv6 から。吹き飛ばされて相手の味方の方へ飛ばされることも'],
+    ],
+    howto: ['ミニオンの後ろに立って E を防ぐ', 'Q の樽の範囲からすぐ出る', '魔法ダメージが多いので魔法防御を'],
+    goTime: 'E を使った直後',
+    backTime: 'Lv6 以降で体力が減っている時',
+    items: '魔法防御',
+  },
+  'レネクトン': {
+    role: 'ファイター',
+    summary: 'ワニの戦士。序盤の殴り合いがとても強い。',
+    strength: ['怒りゲージが50以上でスキルが強化される', 'W の強化版は長いスタン', 'E で2回ダッシュして出入りする'],
+    dodge: [
+      ['E（ダッシュ）→ W（スタン）', 'E で近づいてから W でスタンしてくる。E の届く距離に入らない'],
+      ['Q（回転斬り）', '周りを斬って回復する。怒りが溜まっていると回復が多い'],
+    ],
+    howto: ['怒りゲージ（体力バーの下）が溜まっている時は戦わない', '序盤は耐えて、中盤以降に戦う', '回復阻害（重傷）も有効'],
+    goTime: '怒りゲージが空の時。中盤以降',
+    backTime: 'Lv1〜6。怒りゲージが溜まっている時',
+    items: '物理防御',
+  },
+  'ガレン': {
+    role: 'ファイター',
+    summary: '剣と盾の戦士。シンプルだが序盤の殴り合いが強い。',
+    strength: ['Q で加速して近づき、沈黙させる', 'E の回転斬りで継続ダメージ', 'R で体力が少ない相手を処刑。パッシブで体力が回復する'],
+    dodge: [
+      ['Q（加速して沈黙）', '加速して近づいてくる。距離を取る'],
+      ['E（回転斬り）', '回っている間は近づかない'],
+      ['R（処刑）', '体力が減っているほど痛い。体力が少なくなったら下がる'],
+    ],
+    howto: ['遠くから削る', '回転中は離れる', 'パッシブで回復させないよう、こまめにちょっかいを出す'],
+    goTime: 'Q と E を使った直後',
+    backTime: '序盤の殴り合い。体力が減っている時（R がある時）',
+    items: '物理防御',
+  },
+  'ヤスオ': {
+    role: 'ファイター',
+    summary: '風を操る剣士。竜巻で打ち上げ、飛び道具を壁で防ぐ。',
+    strength: ['Q3 の竜巻で打ち上げ', 'W（風の壁）で飛び道具を防ぐ', 'パッシブで時々シールドが張られる'],
+    dodge: [
+      ['Q3（竜巻）', '刀に風がまとわりついたら次の Q が竜巻。一直線に飛んでくるので横に動く'],
+      ['R（空中斬り）', '打ち上げられた相手に飛んでくる。打ち上げられないことが大事'],
+    ],
+    howto: ['パッシブのシールドを剥がしてから仕掛ける', 'ミニオンが多いと E で飛び回られる。少ない時に戦う'],
+    goTime: 'シールドが無い時。Q3 を外した後',
+    backTime: '攻撃速度・クリティカルのアイテムが揃った後',
+    items: '物理防御',
+  },
+  'ティーモ': {
+    role: '遠距離',
+    summary: '毒の吹き矢とキノコの罠を使う、遠距離のチャンピオン。',
+    strength: ['毒の通常攻撃で削る', 'Q（目潰し）で相手が通常攻撃できなくなる', 'R のキノコは見えない罠'],
+    dodge: [
+      ['R（キノコ）', '踏むと爆発してスロウと毒。オラクルレンズ（赤いトリンケット）で見つけて壊す'],
+      ['Q（目潰し）', '当たると数秒間、通常攻撃が当たらない。目潰し中は殴らない'],
+    ],
+    howto: ['オラクルレンズを持つ', '目潰し中は戦わず、切れてから', '近づければ柔らかいので一気に倒す'],
+    goTime: 'Q を使った直後',
+    backTime: 'Lv6 以降でキノコが多い場所',
+    items: '魔法防御',
+  },
+  'モルデカイザー': {
+    role: 'ファイター（魔法）',
+    summary: '鉄の巨人。R で相手を1対1の空間に連れ込む。',
+    strength: ['E で引き寄せる', 'R で相手を別の空間に連れ込み、1対1にする（逃げられない）', 'パッシブが付くと周りに継続ダメージ'],
+    dodge: [
+      ['E（引き寄せ）', '少し遅れて引き寄せる範囲攻撃。範囲が見えたら横へ'],
+      ['Q（叩きつけ）', '1体だけに当たると強くなる。ミニオンの近くで戦う'],
+      ['R（死の領域）', 'Lv6 から。連れ込まれたら7秒ほど逃げられない'],
+    ],
+    howto: ['E を避けることが一番大事', 'R に入れられる前に、勝てるか（体力・スキル）を判断', '魔法ダメージなので魔法防御を'],
+    goTime: 'E を使った直後',
+    backTime: 'Lv6 以降で R がある時',
+    items: '魔法防御',
+  },
+  'アンベッサ': {
+    role: 'ファイター',
+    summary: '連続ダッシュで戦う近接ファイター。',
+    strength: ['スキルを使うたびに短くダッシュし、強化攻撃をしてくる', 'R の突進で一気に近づく'],
+    dodge: [
+      ['R（突進）', 'Lv6 から。一気に近づいてくる大技'],
+    ],
+    howto: ['スキルを撃ち切らせてから反撃', '長い殴り合いを避け、CD中に戦う'],
+    goTime: 'スキルを使い切った直後',
+    backTime: '序盤〜中盤の殴り合い',
+    items: '物理防御',
+  },
+  'トリンダメア': {
+    role: 'ファイター',
+    summary: '蛮族の王。R で数秒間死ななくなる。',
+    strength: ['R で数秒間、体力が1より減らない', 'クリティカルで火力が高い', 'E の回転斬りで出入りする'],
+    dodge: [
+      ['E（回転斬り）', '一直線に回りながら突っ込んでくる'],
+      ['W（スロウ）', '背中を向けているとスロウがかかる。逃げる時に注意'],
+    ],
+    howto: ['R 中は逃げて時間切れを待つ', 'スロウ・CC で足止め', 'R が無い時に戦う'],
+    goTime: 'R が無い時',
+    backTime: 'クリティカルのアイテムが揃った後。R 中',
+    items: '物理防御（クリティカルを抑える効果付きも有効）',
+  },
+  'リヴェン': {
+    role: 'ファイター',
+    summary: '折れた大剣の剣士。連続攻撃のコンボが得意。',
+    strength: ['Q を3回使える。3回目で打ち上げ', 'W でスタン、E でシールド', 'R で攻撃範囲と火力が上がり、さらに斬撃を飛ばす'],
+    dodge: [
+      ['Q3（打ち上げ）', '3回目の Q で跳んで打ち上げてくる'],
+      ['W（スタン）', 'リヴェンの周りの範囲スタン。近づかれたら注意'],
+    ],
+    howto: ['コンボを受けた後の、スキルが無い時間に反撃', 'Q を2回使った後は3回目を警戒'],
+    goTime: 'Q と W を使い切った後',
+    backTime: 'Lv6 以降。最初のアイテム完成後',
+    items: '物理防御',
+  },
+  'ナー': {
+    role: 'ファイター',
+    summary: '小さい時はブーメランで遠くから削り、怒るとメガナーに変身する。',
+    strength: ['小ナーのブーメランで削る', '怒りゲージが溜まるとメガナーに変身して強くなる', 'メガナーの R で壁に叩きつけてスタン'],
+    dodge: [
+      ['R（壁に叩きつけ）', 'メガナー中だけ。壁の近くに立たない'],
+      ['Q（ブーメラン / 岩）', '小ナーはブーメラン、メガナーは岩を投げる。直線なので横に'],
+    ],
+    howto: ['怒りゲージ（体力バーの下）を見る。満タン近くは戦わない', 'メガナーが終わった直後は弱い'],
+    goTime: '怒りゲージが少ない時。変身が終わった直後',
+    backTime: 'メガナーに変身している時',
+    items: '物理防御',
+  },
+  'ナサス': {
+    role: 'ファイター（後半型）',
+    summary: '犬の頭の戦士。Q でスタックを溜めて後半にとても強くなる。',
+    strength: ['Q でとどめを刺すたびに Q が永久に強くなる', 'W の大きなスロウ', 'R で大きくなって硬くなる'],
+    dodge: [
+      ['W（スロウ）', '対象指定で避けられない。W の後に Q で殴りに来る'],
+    ],
+    howto: ['序盤から攻めて Q のスタックを溜めさせない', 'Q でミニオンにとどめを刺す時に殴る', '後半の1対1は避ける'],
+    goTime: 'Lv1〜6（序盤は弱い）',
+    backTime: '後半（Q のスタックが多い時）。R 中',
+    items: '物理防御',
+  },
+  'イラオイ': {
+    role: 'ファイター',
+    summary: '触手を操る巫女。触手の近くでは非常に強い。',
+    strength: ['E で魂を引き出し、魂やイラオイが触手の攻撃を受けさせる', 'R で触手が大量に出る', '触手の近くで回復しながら戦う'],
+    dodge: [
+      ['E（魂の引き出し）', '直線の腕が伸びてくる。ミニオンの後ろに立つ'],
+      ['R（触手の大量発生）', 'Lv6 から。R 中は触手の範囲から出る'],
+    ],
+    howto: ['E を避けることが一番大事', '触手の近くで戦わない（触手は壊せる）', 'E が当たったら魂を倒すか、範囲から逃げる'],
+    goTime: 'E を外した直後',
+    backTime: 'Lv6 以降で R がある時',
+    items: '物理防御、重傷',
+  },
+  'セト': {
+    role: 'ファイター',
+    summary: '拳で戦う喧嘩屋。受けたダメージを溜めて大技で返す。',
+    strength: ['W の中央は真ダメージ', '受けたダメージを灰色の体力（グリット）に溜める', 'E で両側から引き寄せ'],
+    dodge: [
+      ['W（大パンチ）', '中央部分が特に痛い。溜めが見えたら中央から外れる'],
+      ['E（両側から引き寄せ）', 'セトの両側にいると引き寄せられてスタン'],
+    ],
+    howto: ['灰色の体力が溜まっている時（たくさん殴った後）は戦わない', 'W の中央を避ける'],
+    goTime: 'W を使った直後',
+    backTime: '灰色の体力が溜まっている時。Lv6 以降',
+    items: '物理防御',
+  },
+  'ポッピー': {
+    role: 'タンク',
+    summary: '大きなハンマーを持つ小さな守護者。壁に叩きつけてスタンさせる。',
+    strength: ['W でダッシュを止める', 'E で壁に叩きつけてスタン', 'R で遠くに飛ばす'],
+    dodge: [
+      ['E（叩きつけ）', '壁際にいると壁まで運ばれてスタン。壁の近くに立たない'],
+      ['W（ダッシュ止め）', 'W 中はダッシュスキルが止められる。W を見てからダッシュ'],
+    ],
+    howto: ['壁際に立たない', 'ダッシュは W を見てから'],
+    goTime: 'E と W を使った直後',
+    backTime: 'Lv6 以降。壁の近くにいる時',
+    items: '物理防御',
+  },
+  'ケネン': {
+    role: '遠距離（魔法）',
+    summary: '雷のニンジャ。マークを3回当ててスタンさせる。',
+    strength: ['スキルや強化攻撃でマークを3回当てるとスタン', 'R で周りを範囲スタン'],
+    dodge: [
+      ['Q（手裏剣）', '直線の手裏剣。マークが付く'],
+      ['R（雷の嵐）', 'Lv6 から。範囲内にいるとマークが溜まってスタン'],
+    ],
+    howto: ['マークが溜まっている時は離れる', '近づければ柔らかい'],
+    goTime: 'E（雷速移動）を使った直後',
+    backTime: 'Lv6 以降で R がある時',
+    items: '魔法防御',
+  },
+  'シェン': {
+    role: 'タンク',
+    summary: '忍者のタンク。R で離れた味方を守りに行ける。',
+    strength: ['E の突進でタウント（挑発して自分を攻撃させる）', 'W で周りの通常攻撃を防ぐ', 'R でどこにいる味方のところへも飛んでいける'],
+    dodge: [
+      ['E（突進して挑発）', '直線の突進。横に避ける'],
+    ],
+    howto: ['シェンが R を使ったら、その間にサイドを押す', 'W の範囲内では通常攻撃が当たらない。範囲から出たところを攻撃'],
+    goTime: 'R を使った直後',
+    backTime: 'Lv6 以降でシェンが近くにいる時',
+    items: '魔法防御（物理防御も）',
+  },
+  'チョ＝ガス': {
+    role: 'タンク',
+    summary: '何でも食べる怪物。食べるほど大きく硬くなる。',
+    strength: ['Q の打ち上げ、W の沈黙', 'R（捕食）は真ダメージの処刑。倒すと最大体力が増える'],
+    dodge: [
+      ['Q（地面からの打ち上げ）', '少し遅れて発生する。地面の印を見たらすぐ出る'],
+      ['R（捕食）', '体力が減っていると一撃でやられる。体力に注意'],
+    ],
+    howto: ['Q の着弾地点からすぐ出る', '体力が減ったら R の圏内に注意して下がる'],
+    goTime: 'Q を外した直後',
+    backTime: 'Lv6 以降で体力が減っている時',
+    items: '魔法防御',
+  },
+  'ドクター・ムンド': {
+    role: 'タンク',
+    summary: '紫の巨人ドクター。R 中の回復でとても硬い。',
+    strength: ['R 中に体力が大きく回復', 'パッシブで最初のCCを無効化', 'Q（包丁）で遠くから削る'],
+    dodge: [
+      ['Q（包丁）', '直線の包丁。当たるとスロウ。ミニオンの後ろに立つ'],
+    ],
+    howto: ['重傷の装備を早めに', 'R 中は戦わない', '序盤は弱いので、Lv1〜5 のうちに削る'],
+    goTime: 'Lv1〜5。R が無い時',
+    backTime: 'R 中。タンクアイテムが揃った後',
+    items: '重傷',
+  },
+  'グウェン': {
+    role: 'ファイター（魔法）',
+    summary: '大きなハサミを持つ人形。霧の中では外から攻撃が当たらない。',
+    strength: ['Q を溜めて撃つと中心は真ダメージ', 'W の霧の中のグウェンには、外から攻撃が当たらない', 'R で針を3回撃ってくる'],
+    dodge: [
+      ['Q（ハサミ）', '溜めが多い時に中心に入らない'],
+      ['R（針）', 'Lv6 から。3回まで撃てる。直線なので横へ'],
+    ],
+    howto: ['霧（W）の中に入って攻撃する', 'Q の溜めが多い時は距離を取る'],
+    goTime: 'W を使い終わった後',
+    backTime: 'Lv6 以降。アイテム完成後',
+    items: '魔法防御',
+  },
+  'ヨリック': {
+    role: 'ファイター',
+    summary: '墓守。グール（手下）とメイデン（R）で1人でレーンを押す。',
+    strength: ['グールを作って一緒に戦う', 'W の檻で閉じ込める', 'R のメイデンが一緒にレーンを押す'],
+    dodge: [
+      ['W（檻）', '周りに檻ができて出られない。攻撃すれば壊せる'],
+      ['E（霧）', '当たるとグールが集まってくる'],
+    ],
+    howto: ['グールを先に倒す', '檻は攻撃して壊す', 'サイドを押されるので、集団戦で人数差を作る'],
+    goTime: 'グールがいない時',
+    backTime: 'Lv6 以降でメイデンがいる時',
+    items: '物理防御',
+  },
+  'サイオン': {
+    role: 'タンク',
+    summary: 'アンデッドの巨人。倒れても少しの間動き続ける。',
+    strength: ['Q を溜めると打ち上げ', 'E で物理防御を下げる', 'R で長距離を突進', '体力が伸び続ける'],
+    dodge: [
+      ['Q（溜め斬り）', '溜めている間は範囲が表示される。正面から横に逃げる'],
+      ['R（突進）', 'Lv6 から。曲がりにくいので横に避ける'],
+    ],
+    howto: ['溜め Q の正面に立たない', '倒しても少しの間動くので、離れる'],
+    goTime: 'Q を外した直後',
+    backTime: '後半（体力が多い時）',
+    items: '物理防御',
+  },
+  'ブラッドミア': {
+    role: '魔法（後半型）',
+    summary: '血の魔術師。回復しながら戦い、後半に強い。',
+    strength: ['Q で回復。数回使うと強化（赤く光る）', 'W の血だまりで無敵', 'R で範囲の追加ダメージ'],
+    dodge: [
+      ['E（血の嵐）', '溜めてから周りに撃つ'],
+      ['R（伝染）', 'Lv6 から。当たると受けるダメージが増える'],
+    ],
+    howto: ['Q が赤く光っている時（強化）は戦わない', '重傷が有効', '序盤に攻める'],
+    goTime: 'W を使った直後。Lv1〜5',
+    backTime: 'Lv6 以降。アイテム2つ以降',
+    items: '魔法防御、重傷',
+  },
+  'シンジド': {
+    role: 'タンク',
+    summary: '毒をまき散らしながら走る錬金術師。',
+    strength: ['Q で毒の道を作る', 'E で投げ飛ばす', 'W で粘着液（スロウ）'],
+    dodge: [
+      ['E（投げ飛ばし）', '近づくと後ろへ投げられる'],
+      ['W（粘着液）', '地面の粘着液に入ると動きが遅くなる'],
+    ],
+    howto: ['追いかけない（毒の道を踏むだけ）', 'E の届く距離に入らない'],
+    goTime: '追いかけてこない時（ファームに集中）',
+    backTime: 'シンジドを追いかけたくなった時',
+    items: '魔法防御',
+  },
+  'ボリベア': {
+    role: 'ファイター',
+    summary: '雷の熊。序盤の殴り合いが強い。',
+    strength: ['Q で加速してスタン', 'E の雷（中にいるとボリベアにシールド）', 'R でタワーを一時的に止める'],
+    dodge: [
+      ['E（雷）', '地面に円が表示される。円の外へ'],
+      ['Q（加速してスタン）', '加速してきたら距離を取る'],
+    ],
+    howto: ['E の円から出る', '序盤の殴り合いを避ける'],
+    goTime: 'Q と E を使った直後',
+    backTime: '序盤〜Lv6',
+    items: '物理防御',
+  },
+  'アカリ': {
+    role: 'アサシン（魔法）',
+    summary: '煙に隠れて戦うニンジャ。一気にダメージを出す。',
+    strength: ['W の煙の中では見えなくなる', 'E の手裏剣が当たると、もう一度飛び込める', 'R で2回突進'],
+    dodge: [
+      ['E（手裏剣）', '直線の手裏剣。当たると追いかけてくる'],
+      ['W（煙）', '煙の中のアカリは見えない。煙に入らず、出てくるのを待つ'],
+    ],
+    howto: ['煙の中に入らない', 'E を避ける', '魔法防御を早めに'],
+    goTime: 'W を使い終わった後',
+    backTime: 'Lv6 以降。体力が減っている時',
+    items: '魔法防御',
+  },
+  'ワーウィック': {
+    role: 'ファイター',
+    summary: '狼男。殴るたびに回復し、体力が減った敵を追いかける。',
+    strength: ['通常攻撃で回復', '体力が50%以下の敵に向かって速く走る', 'R で飛びかかって動けなくする'],
+    dodge: [
+      ['R（飛びかかり）', 'Lv6 から。一直線に飛びかかってくる。横に避ける'],
+      ['E（恐怖）', '終わると周りの敵を恐怖させる'],
+    ],
+    howto: ['体力を50%以下にしない（追いかけられやすくなる）', '重傷を早めに'],
+    goTime: 'R を外した直後',
+    backTime: '自分の体力が50%以下の時',
+    items: '重傷、物理防御',
+  },
+  'クレッド': {
+    role: 'ファイター',
+    summary: 'トカゲのスカールに乗った小さな戦士。降りると弱くなる。',
+    strength: ['Q のトラバサミで繋いで引っ張る', 'スカールに乗っている間は強い', 'R で長距離を突進'],
+    dodge: [
+      ['Q（トラバサミ）', '当たると繋がれ、少し後に引っ張られる。遠くまで離れれば鎖が切れる'],
+    ],
+    howto: ['スカールから降りている時が攻め時', 'Q を避ける'],
+    goTime: 'スカールから降りている時',
+    backTime: 'スカールに乗っていて体力が多い時',
+    items: '物理防御',
+  },
+  'ヴェイン': {
+    role: '遠距離（トップでの起用）',
+    summary: 'ボットのADCだがトップでも使われる。3回目の攻撃が真ダメージ。',
+    strength: ['3回続けて攻撃すると真ダメージ', 'Q で転がって攻撃', 'E で壁に叩きつけてスタン'],
+    dodge: [
+      ['E（叩きつけ）', '壁の近くにいるとスタン。壁から離れる'],
+    ],
+    howto: ['序盤から近づいて攻める（序盤は弱い）', '壁際に立たない'],
+    goTime: 'Lv1〜5',
+    backTime: 'アイテム2つ以降',
+    items: '体力、物理防御',
+  },
+};
+</script>
+<script>
+// 自動生成: node tools/update-stats.js top（手で編集しない）
+window.LANE_STATS = {"source":"LOL.PS","patch":"26.21","tier":"Emerald+","region":"Korea","fetchedAt":"2026-10-25","total":65,"champions":{"ガングプランク":{"rank":1,"tier":1,"ps":57.07,"win":52.08,"pick":6.73,"ban":27.37,"count":8037},"マルファイト":{"rank":2,"tier":1,"ps":55.97,"win":52.26,"pick":7.28,"ban":16.11,"count":8693},"ジャックス":{"rank":3,"tier":1,"ps":55.15,"win":50.3,"pick":7.87,"ban":13.98,"count":9394,"matchups":{"シンジド":{"win":39.47,"games":114},"ブラッドミア":{"win":40.62,"games":160},"イラオイ":{"win":43.75,"games":96},"ナー":{"win":44.44,"games":117},"フィオラ":{"win":45.35,"games":258},"マルファイト":{"win":46.1,"games":295},"アカリ":{"win":46.48,"games":213},"オラフ":{"win":46.85,"games":254},"ガングプランク":{"win":47.04,"games":253},"ヨリック":{"win":47.37,"games":133},"ワーウィック":{"win":47.71,"games":109},"ガレン":{"win":48.03,"games":431},"ケネン":{"win":48.45,"games":194},"クレッド":{"win":48.57,"games":105},"レネクトン":{"win":48.65,"games":222},"サイオン":{"win":48.67,"games":113},"トリンダメア":{"win":48.77,"games":162},"セト":{"win":48.8,"games":125},"ティーモ":{"win":49.17,"games":120},"パンテオン":{"win":49.69,"games":322},"ボリベア":{"win":62.07,"games":116},"イレリア":{"win":56.36,"games":291},"ヨネ":{"win":55.44,"games":900},"ダリウス":{"win":55.21,"games":259},"モルデカイザー":{"win":54.65,"games":172},"ザーヘン":{"win":54.23,"games":142},"ジェイス":{"win":53.89,"games":334},"ナサス":{"win":53.77,"games":106},"カ・サンテ":{"win":53.08,"games":292},"カミール":{"win":52.75,"games":273},"ドクター・ムンド":{"win":52.48,"games":141},"エイトロックス":{"win":52.26,"games":287},"ヤスオ":{"win":51.88,"games":160},"グラガス":{"win":51.85,"games":324},"アンベッサ":{"win":50.53,"games":188},"シェン":{"win":50.45,"games":111}},"duo":{"リー・シン":{"win":51.77,"games":1188},"サイラス":{"win":48.43,"games":510},"ニダリー":{"win":53.54,"games":353},"グレイブス":{"win":44.51,"games":346},"シン・ジャオ":{"win":51.51,"games":332},"ジャーヴァンⅣ":{"win":50,"games":324},"ヴィエゴ":{"win":50.32,"games":308},"キヤナ":{"win":53.11,"games":305},"ウーコン":{"win":50.66,"games":304},"リリア":{"win":49.17,"games":303},"ヴァイ":{"win":49.14,"games":291},"タロン":{"win":47.57,"games":288},"ヘカリム":{"win":44.49,"games":272},"カ＝ジックス":{"win":51.9,"games":237},"ジェイス":{"win":45.06,"games":233},"エコー":{"win":50.43,"games":230},"エリス":{"win":55.75,"games":226},"ケイン":{"win":47.96,"games":221},"ザイラ":{"win":61.19,"games":219},"マスター・イー":{"win":49.22,"games":193},"ナフィーリ":{"win":47.59,"games":187},"チョ＝ガス":{"win":50.56,"games":178},"ノクターン":{"win":53.79,"games":145},"キンドレッド":{"win":55.56,"games":144},"ザック":{"win":53.24,"games":139},"タリヤ":{"win":50.72,"games":138},"ゼド":{"win":43.48,"games":138},"シャコ":{"win":51.11,"games":135},"ブライアー":{"win":44.44,"games":126},"レク＝サイ":{"win":62.71,"games":118}},"build":{"spells":["フラッシュ","イグナイト"],"skills":["W","E","Q"],"start":[["ドラン ブレード"],["体力ポーション"]],"core":["トリニティ フォース","サンダード スカイ","ゾーニャの砂時計","デス ダンス"],"shoes":"プレート スチールキャップ","slots":[["トリニティ フォース","黄昏と暁","ルインドキング ブレード"],["サンダード スカイ","ヘクステック ガンブレード","ルインドキング ブレード"],["ゾーニャの砂時計","デス ダンス","ステラックの篭手"],["デス ダンス","ゾーニャの砂時計","ステラックの篭手"],["ガーディアン エンジェル","デス ダンス","ステラックの篭手"]]}},"ダリウス":{"rank":4,"tier":1,"ps":54.31,"win":52.1,"pick":5.3,"ban":7.32,"count":6324},"イレリア":{"rank":5,"tier":1,"ps":53.32,"win":49.55,"pick":6.27,"ban":22.71,"count":7481},"レネクトン":{"rank":6,"tier":1,"ps":53.25,"win":50.99,"pick":5.73,"ban":4.39,"count":6838},"フィオラ":{"rank":7,"tier":2,"ps":52.76,"win":50.42,"pick":4.99,"ban":4.81,"count":5956},"ポッピー":{"rank":8,"tier":2,"ps":52.63,"win":54.94,"pick":1.3,"ban":8.77,"count":1549},"オラフ":{"rank":9,"tier":2,"ps":52.51,"win":50.73,"pick":4.02,"ban":5.34,"count":4794},"パンテオン":{"rank":10,"tier":2,"ps":52.12,"win":49.89,"pick":6.79,"ban":7.19,"count":8104},"カミール":{"rank":11,"tier":2,"ps":52.05,"win":51.47,"pick":4.42,"ban":1.3,"count":5275},"ヨネ":{"rank":12,"tier":2,"ps":51.83,"win":48.58,"pick":11.37,"ban":18.71,"count":13568},"サイオン":{"rank":13,"tier":2,"ps":51.75,"win":51.9,"pick":3.46,"ban":0.54,"count":4131},"モルデカイザー":{"rank":15,"tier":2,"ps":51.62,"win":51.21,"pick":3.75,"ban":2.37,"count":4476},"エイトロックス":{"rank":14,"tier":2,"ps":51.62,"win":49.99,"pick":6.68,"ban":3.67,"count":7971},"クレッド":{"rank":16,"tier":2,"ps":51.4,"win":52.9,"pick":1.63,"ban":0.56,"count":1947},"トリンダメア":{"rank":17,"tier":2,"ps":51.32,"win":51.44,"pick":2.47,"ban":1.07,"count":2943},"ゼド":{"rank":18,"tier":2,"ps":51.12,"win":54.37,"pick":0.63,"ban":21.39,"count":756},"ティーモ":{"rank":19,"tier":2,"ps":50.94,"win":49.87,"pick":3.63,"ban":6.09,"count":4329},"クイン":{"rank":20,"tier":2,"ps":50.81,"win":53.98,"pick":0.65,"ban":0.35,"count":778},"ナサス":{"rank":21,"tier":3,"ps":50.34,"win":49.86,"pick":3.2,"ban":7.77,"count":3823},"シンジド":{"rank":22,"tier":3,"ps":50.3,"win":51.18,"pick":2.27,"ban":0.6,"count":2712},"リヴェン":{"rank":23,"tier":3,"ps":50.29,"win":52.06,"pick":1.73,"ban":0.19,"count":2067},"ケネン":{"rank":24,"tier":3,"ps":50.26,"win":50.09,"pick":2.46,"ban":2.16,"count":2941},"グウェン":{"rank":25,"tier":3,"ps":50.16,"win":51.81,"pick":1.78,"ban":0.76,"count":2125},"ガレン":{"rank":26,"tier":3,"ps":50.06,"win":50.65,"pick":3.21,"ban":1.46,"count":3826},"ヤスオ":{"rank":27,"tier":3,"ps":50.06,"win":49.03,"pick":3.44,"ban":20.55,"count":4112},"ウディア":{"rank":28,"tier":3,"ps":49.96,"win":53.12,"pick":0.59,"ban":0.21,"count":706},"シェン":{"rank":29,"tier":3,"ps":49.93,"win":51.18,"pick":2.19,"ban":0.27,"count":2618},"ナー":{"rank":30,"tier":3,"ps":49.92,"win":49.26,"pick":3.9,"ban":2.01,"count":4653},"ワーウィック":{"rank":31,"tier":3,"ps":49.83,"win":50.99,"pick":1.82,"ban":0.73,"count":2173},"リサンドラ":{"rank":32,"tier":3,"ps":49.73,"win":52.99,"pick":0.7,"ban":2.26,"count":836},"アニビア":{"rank":33,"tier":4,"ps":49.43,"win":51.2,"pick":0.97,"ban":2.17,"count":1162},"ザック":{"rank":34,"tier":4,"ps":49.42,"win":52.9,"pick":0.77,"ban":0.97,"count":915},"セト":{"rank":35,"tier":4,"ps":49.35,"win":50.21,"pick":3.52,"ban":0.82,"count":4202},"トランドル":{"rank":36,"tier":4,"ps":49.33,"win":51.82,"pick":0.94,"ban":0.12,"count":1127},"グラガス":{"rank":37,"tier":4,"ps":49.26,"win":49.98,"pick":2.74,"ban":0.4,"count":3271},"アンベッサ":{"rank":38,"tier":4,"ps":49.26,"win":49.08,"pick":4.2,"ban":2.34,"count":5018},"カ・サンテ":{"rank":39,"tier":4,"ps":49,"win":47.96,"pick":6.41,"ban":3.41,"count":7652},"ドクター・ムンド":{"rank":40,"tier":4,"ps":48.9,"win":49.98,"pick":2.79,"ban":0.51,"count":3331,"matchups":{"イレリア":{"win":31.43,"games":70},"グウェン":{"win":31.82,"games":110},"グラガス":{"win":32.61,"games":46},"トリンダメア":{"win":39.47,"games":38},"アンベッサ":{"win":42.19,"games":64},"オーン":{"win":42.86,"games":35},"エイトロックス":{"win":43.64,"games":165},"モルデカイザー":{"win":45.61,"games":57},"ナサス":{"win":46.51,"games":86},"アカリ":{"win":47.06,"games":51},"ダリウス":{"win":47.31,"games":93},"ヨネ":{"win":47.37,"games":228},"ジャックス":{"win":47.52,"games":141},"ガングプランク":{"win":48.15,"games":108},"シンジド":{"win":48.28,"games":58},"オラフ":{"win":49.06,"games":53},"サイオン":{"win":49.33,"games":75},"マルファイト":{"win":61.21,"games":232},"ザーヘン":{"win":60.53,"games":38},"ティーモ":{"win":58.43,"games":89},"ジェイス":{"win":57.86,"games":159},"カミール":{"win":55.93,"games":59},"フィオラ":{"win":53.57,"games":56},"ヴェイン":{"win":52.63,"games":38},"ナー":{"win":52.38,"games":63},"ボリベア":{"win":52.27,"games":44},"パンテオン":{"win":52.07,"games":121},"ケネン":{"win":51.85,"games":54},"ヨリック":{"win":51.28,"games":39},"ガレン":{"win":51.28,"games":39},"カ・サンテ":{"win":51.25,"games":80},"シェン":{"win":51.16,"games":43},"レネクトン":{"win":50.98,"games":102},"セト":{"win":50,"games":46}},"duo":{"リー・シン":{"win":44.83,"games":406},"サイラス":{"win":53.42,"games":161},"グレイブス":{"win":55.48,"games":146},"キヤナ":{"win":43.51,"games":131},"シン・ジャオ":{"win":44.8,"games":125},"ジャーヴァンⅣ":{"win":50.82,"games":122},"ヴァイ":{"win":52.1,"games":119},"ヴィエゴ":{"win":51.28,"games":117},"リリア":{"win":54.46,"games":112},"ニダリー":{"win":47.75,"games":111},"ウーコン":{"win":46.67,"games":105},"タロン":{"win":47.12,"games":104},"カ＝ジックス":{"win":55.67,"games":97},"エリス":{"win":48.35,"games":91},"エコー":{"win":52.33,"games":86},"ヘカリム":{"win":45.24,"games":84},"ケイン":{"win":50.6,"games":83},"マスター・イー":{"win":52.5,"games":80},"ジェイス":{"win":52.11,"games":71},"タリヤ":{"win":53.73,"games":67},"ザイラ":{"win":56.06,"games":66},"ナフィーリ":{"win":58.46,"games":65},"シャコ":{"win":55.38,"games":65},"キンドレッド":{"win":40.63,"games":64}},"build":{"spells":["フラッシュ","テレポート"],"skills":["Q","E","W"],"start":[["ドラン シールド"],["体力ポーション"]],"core":["心の鋼","ワーモグ アーマー","スピリット ビサージュ","ソーンメイル"],"shoes":"スイフトネス ブーツ","slots":[["心の鋼","ワーモグ アーマー","スピリット ビサージュ"],["ワーモグ アーマー","心の鋼","スピリット ビサージュ"],["スピリット ビサージュ","ソーンメイル","ランデュイン オーメン"],["スピリット ビサージュ","ランデュイン オーメン","ソーンメイル"],["ランデュイン オーメン","ソーンメイル","タイタン ハイドラ"]]}},"ハイマーディンガー":{"rank":41,"tier":4,"ps":48.87,"win":51.16,"pick":1.23,"ban":2.23,"count":1466},"チョ＝ガス":{"rank":42,"tier":4,"ps":48.85,"win":50.9,"pick":1.16,"ban":2.23,"count":1385,"matchups":{"ハイマーディンガー":{"win":30.43,"games":23},"ジャックス":{"win":39.34,"games":61},"モルデカイザー":{"win":40,"games":25},"トリンダメア":{"win":40.91,"games":22},"ナー":{"win":42.11,"games":38},"パンテオン":{"win":42.11,"games":38},"オラフ":{"win":42.31,"games":26},"ボリベア":{"win":42.86,"games":21},"サイラス":{"win":42.86,"games":14},"グウェン":{"win":43.75,"games":16},"ジェイス":{"win":45.28,"games":53},"エイトロックス":{"win":45.65,"games":46},"フィオラ":{"win":46.15,"games":26},"カ・サンテ":{"win":46.51,"games":43},"セト":{"win":46.67,"games":30},"ヨネ":{"win":49.21,"games":63},"ダリウス":{"win":65.38,"games":26},"ナサス":{"win":59.26,"games":27},"イレリア":{"win":59.09,"games":44},"サイオン":{"win":59.09,"games":44},"ヨリック":{"win":58.06,"games":93},"アンベッサ":{"win":57.89,"games":19},"アカリ":{"win":57.89,"games":19},"ガレン":{"win":57.58,"games":33},"ザーヘン":{"win":57.14,"games":14},"ヤスオ":{"win":57.14,"games":21},"レネクトン":{"win":57.14,"games":28},"マルファイト":{"win":54.72,"games":53},"ガングプランク":{"win":54.39,"games":57},"シンジド":{"win":52.94,"games":17},"グラガス":{"win":52.17,"games":23},"ドクター・ムンド":{"win":51.72,"games":29},"ケネン":{"win":50,"games":16},"ティーモ":{"win":50,"games":32},"カミール":{"win":50,"games":34}},"duo":{"リー・シン":{"win":48.24,"games":170},"グレイブス":{"win":53.73,"games":67},"ジャーヴァンⅣ":{"win":46.97,"games":66}},"build":{"spells":["フラッシュ","テレポート"],"skills":["E","Q","W"],"start":[["ドラン リング"],["体力ポーション","体力ポーション"]],"core":["心の鋼","終わりなき絶望"],"shoes":"プレート スチールキャップ","slots":[["心の鋼","ヘクステック ロケットベルト","ロッド オブ エイジス"],["リフトメーカー","終わりなき絶望","ホロウ レディアンス"],["ソーンメイル","終わりなき絶望","デッド マン プレート"],["変幻自在のジャック＝ショー","終わりなき絶望","ランデュイン オーメン"],["変幻自在のジャック＝ショー","ランデュイン オーメン","ソーンメイル"]]}},"ヨリック":{"rank":43,"tier":4,"ps":48.82,"win":49.19,"pick":2.95,"ban":5.5,"count":3523},"オーン":{"rank":44,"tier":4,"ps":48.75,"win":50.86,"pick":2.14,"ban":0.14,"count":2560},"ジェイス":{"rank":45,"tier":4,"ps":48.69,"win":47.31,"pick":9.23,"ban":16.62,"count":11023},"アーゴット":{"rank":46,"tier":4,"ps":48.68,"win":51.79,"pick":1.05,"ban":0.2,"count":1259},"タム・ケンチ":{"rank":47,"tier":4,"ps":48.51,"win":51.94,"pick":0.82,"ban":0.48,"count":978},"ウーコン":{"rank":48,"tier":4,"ps":48.26,"win":49.8,"pick":1.05,"ban":5.69,"count":1259},"ケイル":{"rank":49,"tier":4,"ps":48.04,"win":51.08,"pick":0.89,"ban":0.15,"count":1067},"アカリ":{"rank":50,"tier":4,"ps":47.93,"win":48.27,"pick":3.68,"ban":19.69,"count":4394},"イラオイ":{"rank":52,"tier":4,"ps":47.91,"win":48.91,"pick":1.89,"ban":1.81,"count":2251},"ボリベア":{"rank":51,"tier":4,"ps":47.91,"win":48.73,"pick":2.77,"ban":1.4,"count":3304},"ブラッドミア":{"rank":53,"tier":4,"ps":47.42,"win":49.13,"pick":1.45,"ban":0.57,"count":1732},"ザーヘン":{"rank":54,"tier":4,"ps":46.86,"win":48.22,"pick":2.45,"ban":0.48,"count":2924},"サイラス":{"rank":55,"tier":4,"ps":46.75,"win":48.7,"pick":1.68,"ban":28.2,"count":2000},"マスター・イー":{"rank":56,"tier":4,"ps":46.24,"win":50.36,"pick":0.59,"ban":3.61,"count":701},"レンガー":{"rank":57,"tier":4,"ps":46.23,"win":50.23,"pick":0.54,"ban":1.17,"count":647},"ランブル":{"rank":58,"tier":5,"ps":45.29,"win":47.62,"pick":2.02,"ban":1.68,"count":2417},"カシオペア":{"rank":59,"tier":5,"ps":45.23,"win":48.25,"pick":0.53,"ban":1.68,"count":628},"ライズ":{"rank":60,"tier":5,"ps":45,"win":47.69,"pick":1.18,"ban":1.06,"count":1409},"ヴェイン":{"rank":61,"tier":5,"ps":44.54,"win":47.26,"pick":1.32,"ban":2.71,"count":1572},"ヴァルス":{"rank":62,"tier":5,"ps":41.03,"win":45.35,"pick":1.4,"ban":1.87,"count":1667},"マオカイ":{"rank":63,"tier":5,"ps":39.46,"win":46.59,"pick":0.58,"ban":0.18,"count":689},"ビクター":{"rank":64,"tier":5,"ps":38.94,"win":45.52,"pick":0.57,"ban":15.73,"count":681},"コーキ":{"rank":65,"tier":5,"ps":38.37,"win":43.64,"pick":0.82,"ban":0.41,"count":983}},"names":["アイバーン","アカリ","アクシャン","アジール","アッシュ","アニビア","アニー","アフェリオス","アムム","アリスター","アンベッサ","アーゴット","アーリ","イブリン","イラオイ","イレリア","ウディア","ウーコン","エイトロックス","エコー","エズリアル","エリス","オラフ","オリアナ","オレリオン・ソル","オーロラ","オーン","カイ＝サ","カサディン","カシオペア","カタリナ","カミール","カリスタ","カルマ","カ・サンテ","カーサス","カ＝ジックス","ガリオ","ガレン","ガングプランク","キヤナ","キンドレッド","クイン","クレッド","グウェン","グラガス","グレイブス","ケイトリン","ケイル","ケイン","ケネン","コグ＝マウ","コーキ","サイオン","サイラス","サミーラ","ザイラ","ザック","ザヤ","ザーヘン","シェン","シャコ","シンジド","シンドラ","シン・ジャオ","シヴァーナ","シヴィア","ジェイス","ジグス","ジャックス","ジャンナ","ジャーヴァンⅣ","ジリアン","ジン","ジンクス","スウェイン","スカーナー","スモルダー","スレッシュ","セジュアニ","セト","セナ","セラフィーン","ゼド","ゼラス","ゼリ","ソナ","ソラカ","ゾーイ","タム・ケンチ","タリック","タリヤ","タロン","ダイアナ","ダリウス","チョ＝ガス","ツイステッド・フェイト","ティーモ","トゥイッチ","トランドル","トリスターナ","トリンダメア","ドクター・ムンド","ドレイヴン","ナサス","ナフィーリ","ナミ","ナー","ニダリー","ニーコ","ニーラ","ヌヌ＆ウィルンプ","ノクターン","ノーチラス","ハイマーディンガー","バード","パイク","パンテオン","ビクター","フィオラ","フィズ","フィドルスティックス","フェイ","ブライアー","ブラウム","ブラッドミア","ブランド","ブリッツクランク","ヘカリム","ベイガー","ベル＝ヴェス","ボリベア","ポッピー","マオカイ","マスター・イー","マルザハール","マルファイト","ミス・フォーチュン","ミリオ","メル","モルガナ","モルデカイザー","ヤスオ","ユナラ","ユーミ","ヨネ","ヨリック","ライズ","ラカン","ラックス","ラムス","ランブル","リサンドラ","リリア","リヴェン","リー・シン","ルシアン","ルブラン","ルル","レオナ","レク＝サイ","レナータ・グラスク","レネクトン","レル","レンガー","ロック","ワーウィック","ヴァイ","ヴァルス","ヴィエゴ","ヴェイン","ヴェックス","ヴェル＝コズ"]};
+</script>
+<script>
+// 用語の説明（チートシートの「用語」タブと「対面」タブに表示）。全レーン共通。
+window.GLOSSARY = [
+  ['CD（クールダウン）', 'スキルを使ってから、もう一度使えるようになるまでの待ち時間。「CD中」＝今は使えない'],
+  ['CC', 'スタン・打ち上げ・スロウ・沈黙など、相手の動きを止めたり邪魔したりする効果'],
+  ['スタン', '少しの間、まったく動けなくなる'],
+  ['スロウ', '移動速度が下がる'],
+  ['沈黙', '少しの間、スキルが使えなくなる（移動と通常攻撃はできる）'],
+  ['トレード', '短く殴り合ってすぐ離れること。相手より多く削れたら勝ち'],
+  ['オールイン', 'どちらかが倒れるまで戦い切ること'],
+  ['ポーク', '遠くから少しずつ削ること'],
+  ['ファーム', 'ミニオンを倒してゴールドを稼ぐこと。CS（倒した数）を増やす'],
+  ['ラストヒット', 'ミニオンにとどめを刺すこと。とどめを刺さないとゴールドがもらえない'],
+  ['ウェーブ', 'レーンを進んでくるミニオンの群れ'],
+  ['フリーズ', 'ウェーブを自分のタワーの近くで止めておくこと。相手は前に出ないとファームできず、ガンクされやすくなる'],
+  ['ガンク', 'ジャングラーなど他のレーンの味方が来て、人数差で倒しに来ること'],
+  ['ダイブ', '相手のタワーの下まで攻め込んで倒すこと'],
+  ['スタック', '重ねるほど強くなる効果（例: ダリウスの出血、ナサスの Q）'],
+  ['パワースパイク', 'レベルやアイテムで急に強くなるタイミング（例: Lv6 で R を覚える）'],
+  ['真ダメージ', '物理防御・魔法防御を無視して、そのまま入るダメージ'],
+  ['重傷', '回復量を減らす効果。回復が多い相手に有効（重傷付きのアイテムがある）'],
+  ['防御貫通', '相手の物理防御・魔法防御の一部を無視する効果。硬い相手に有効'],
+  ['スプリットプッシュ', '味方と離れて、1人でサイドのレーンを押すこと'],
+  ['ピール', '味方（特に後衛）を守ること'],
+  ['エンゲージ', '集団戦を仕掛けること'],
+  ['TP（テレポート）', 'サモナースペル。味方のタワーやミニオンなどの場所へワープできる'],
+  ['オラクルレンズ', '赤いトリンケット。近くの見えないワードや罠（ティーモのキノコなど）を見つける'],
+];
+</script>
+<script>
+// LoLノート 共通アプリ。レーン固有のデータは window.LANE（data/<lane>.js）から受け取る。
+(() => {
+const L = window.LANE;
+// tools/build-single.js で作った1ファイル版（統計の更新手順は出さない）
+const SINGLE = !!window.LOL_NOTE_SINGLE;
+// 作成済みのレーン（ヘッダーのリンクに使う）
+const LANES = [{ id: 'top', name: 'トップ' }, { id: 'sup', name: 'サポート' }];
+
+// ================= 保存 =================
+// 全レーンを1つのキーに保存し、レーンごとに分けて持つ
+const KEY = 'lol-note-v1';
+const emptyLane = () => ({
+  champ: '', pool: [], poolOnly: false, memoAll: false,
+  pick: { ally: '', enemies: [] }, current: null, games: [], notes: {}, custom: [],
+});
+function load() {
+  let root = { lanes: {} };
+  try { root = JSON.parse(localStorage.getItem(KEY)) || root; } catch (e) {}
+  if (!root.lanes) root.lanes = {};
+  if (!root.lanes[L.id]) {
+    root.lanes[L.id] = emptyLane();
+    if (L.id === 'sup') migrateThresh(root.lanes.sup);
+  }
+  root.lanes[L.id] = Object.assign(emptyLane(), root.lanes[L.id]);
+  return root;
+}
+// 旧 thresh-tool.html のメモを引き継ぐ
+function migrateThresh(ls) {
+  try {
+    const old = JSON.parse(localStorage.getItem('thresh-tool-v1'));
+    if (!old) return;
+    const tag = (g) => Object.assign(g, { champ: 'スレッシュ', ally: g.adc || '' });
+    ls.games = (old.games || []).map(tag);
+    if (old.current) ls.current = tag(old.current);
+    ls.champ = 'スレッシュ';
+  } catch (e) {}
+}
+const ROOT = load();
+const LS = ROOT.lanes[L.id];
+function save() { try { localStorage.setItem(KEY, JSON.stringify(ROOT)); } catch (e) {} }
+
+// ================= 共通 =================
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = (s) => s.trim().replace(/=/g, '＝').replace(/\s+/g, '');
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+function fmtDate(ts) {
+  const d = new Date(ts);
+  return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+// データ未登録のチャンピオン（画面から追加したもの）は空の相性・チートシートで扱う
+const blankChamp = (name) => ({ name, type: '追加', peel: 1, catch: false,
+  great: [], good: [], weakVs: [], strongVs: [], cheat: {}, custom: true });
+const champs = () => [...L.champions, ...LS.custom.map(blankChamp)];
+const getChamp = (name) => champs().find((c) => c.name === name);
+if (!getChamp(LS.champ)) LS.champ = champs()[0].name;
+
+// 統計（data/<lane>-stats.js が無ければ表示しないだけ）
+const ST = window.LANE_STATS;
+const statOf = (c) => (ST && ST.champions[c.name]) || null;
+// 対面・デュオの勝率をスコアに換算（50%から1%ずれるごとに±0.15、50試合未満は試合数に比例して弱める、最大±2）
+const pairScore = (r) => Math.max(-2, Math.min(2, (r.win - 50) * 0.15 * Math.min(1, r.games / 50)));
+const statLine = (s) => s ? `ティア${s.tier} ／ 勝率 ${s.win}% ／ ピック ${s.pick}% ／ BAN ${s.ban}%` : '';
+
+// ================= 画面の骨組み =================
+document.title = `LoLノート ${L.name}`;
+document.body.innerHTML = `
+<header>
+  <h1><span>◆</span> LoLノート — ${esc(L.name)}</h1>
+  <div class="lanes">${LANES.filter((l) => !SINGLE && l.id !== L.id).map((l) =>
+    `<a href="${l.id}.html">${esc(l.name)}へ</a>`).join('')}</div>
+  <div class="champ-select">
+    <select id="champ" title="使用チャンピオン"></select>
+    <button class="btn sm" id="champ-add" title="データに無いチャンピオンを追加">＋追加</button>
+    <button class="btn sm danger" id="champ-del" title="＋追加で足したチャンピオンを削除" hidden>削除</button>
+  </div>
+  <nav>
+    <button class="tab active" data-page="pick">BAN/PICK<kbd>1</kbd></button>
+    <button class="tab" data-page="cheat">チートシート<kbd>2</kbd></button>
+    <button class="tab" data-page="memo">反省メモ<kbd>3</kbd></button>
+  </nav>
+</header>
+<main>
+  <section class="page active" id="page-pick">
+    <div class="warnbox" id="stats-warn"></div>
+    <div class="grid2">
+      <div class="card">
+        <h2>${esc(L.allyLabel)}</h2>
+        <select id="ally"></select>
+        <h2 style="margin-top:16px">相手チャンピオン</h2>
+        <div class="row">
+          <input type="text" id="enemy-input" list="champ-list" placeholder="名前を入力してEnter">
+          <button class="btn" id="enemy-add">追加</button>
+        </div>
+        <datalist id="champ-list"></datalist>
+        <div class="chips" id="enemy-chips"></div>
+        <div class="row" style="margin-top:12px"><button class="btn danger" id="pick-reset">リセット</button></div>
+        <p class="muted small">分かった分から追加すると随時更新されます。</p>
+      </div>
+      <div class="card">
+        <h2 id="verdict-title"></h2>
+        <div id="verdict"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h2 style="margin:0">おすすめ</h2>
+        <label class="check"><input type="checkbox" id="pool-only"> 自分のプールだけ</label>
+      </div>
+      <div class="reco" id="reco" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <h2>自分のプール</h2>
+      <p class="muted small">使えるチャンピオンをタップで選択。「自分のプールだけ」にするとここから選びます。</p>
+      <div class="chips" id="pool"></div>
+    </div>
+    <div class="card">
+      <h2>${SINGLE ? '統計について' : '統計の更新（パッチが変わったら）'}</h2>
+      <p class="small" id="stats-src"></p>
+      ${SINGLE ? '<p class="small muted">この版では統計を更新できません。新しいパッチの統計は、配った人が新しい版を用意するのを待ってください。</p>' : `
+      <ol class="small steps">
+        <li>エクスプローラーでこのツールのフォルダ（${esc(L.id)}.html があるフォルダ）を開く</li>
+        <li>上のアドレスバーに <code>cmd</code> と入力して Enter（黒い画面が開く）</li>
+        <li>下のコマンドをコピーして貼り付け、Enter
+          <div class="row" style="margin-top:6px">
+            <code class="cmd" id="update-cmd">node tools/update-stats.js ${esc(L.id)}</code>
+            <button class="btn sm" id="copy-cmd">コピー</button>
+          </div>
+        </li>
+        <li>チャンピオンごとの相性も取るので5分ほどかかります。「〜を更新: パッチ○○」と出たら、このページを再読み込み（F5）</li>
+      </ol>`}
+    </div>
+  </section>
+
+  <section class="page" id="page-cheat">
+    <div class="warnbox" id="cheat-warn"></div>
+    <div class="subtabs" id="cheat-tabs"></div>
+    <div class="card cheat" id="cheat-body"></div>
+  </section>
+
+  <section class="page" id="page-memo">
+    <div class="card" id="current-game"></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2 style="margin:0">よくある死因</h2>
+          <label class="check"><input type="checkbox" id="memo-all"> 全チャンピオン</label>
+        </div>
+        <div id="stats" style="margin-top:8px"></div>
+      </div>
+      <div class="card">
+        <h2>データ</h2>
+        <p class="muted small">メモはこの端末のブラウザに保存されます。ブラウザのデータ消去で消えるので、ときどき書き出しておくと安心です。</p>
+        <div class="row">
+          <button class="btn" id="export">書き出し（JSON）</button>
+          <button class="btn" id="import">読み込み</button>
+          <input type="file" id="import-file" accept="application/json" hidden>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 id="history-title">過去の試合</h2>
+      <div id="history"></div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>`;
+
+// ================= ヘッダー =================
+function renderHeader() {
+  $('champ').innerHTML = champs().map((c) =>
+    `<option ${c.name === LS.champ ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  // 削除できるのは「＋追加」で足したチャンピオンだけ（data/<lane>.js のチャンピオンは消せない）
+  $('champ-del').hidden = !LS.custom.includes(LS.champ);
+}
+$('champ-del').addEventListener('click', () => {
+  const name = LS.champ;
+  const games = LS.games.filter((g) => g.champ === name).length;
+  if (!confirm(`${name} をリストから削除しますか？${games ? `\n（反省メモの過去の試合 ${games}件は残ります）` : ''}`)) return;
+  LS.custom = LS.custom.filter((n) => n !== name);
+  LS.pool = LS.pool.filter((n) => n !== name);
+  setChamp(champs()[0].name);
+  toast(`${name} を削除しました`);
+});
+function setChamp(name) {
+  LS.champ = name; save(); renderAll();
+}
+$('champ').addEventListener('change', (e) => setChamp(e.target.value));
+$('champ-add').addEventListener('click', () => {
+  const name = norm(prompt('追加するチャンピオン名') || '');
+  if (!name) return;
+  if (!getChamp(name)) LS.custom.push(name);
+  setChamp(name);
+  toast(`${name} を追加しました`);
+});
+
+function showPage(page) {
+  document.querySelectorAll('nav .tab').forEach((b) => b.classList.toggle('active', b.dataset.page === page));
+  document.querySelectorAll('section.page').forEach((s) => s.classList.toggle('active', s.id === 'page-' + page));
+}
+document.querySelectorAll('nav .tab').forEach((b) => b.addEventListener('click', () => showPage(b.dataset.page)));
+document.addEventListener('keydown', (e) => {
+  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.ctrlKey || e.altKey || e.metaKey) return;
+  const map = { '1': 'pick', '2': 'cheat', '3': 'memo' };
+  if (map[e.key]) showPage(map[e.key]);
+});
+
+// ================= BAN/PICK =================
+function scoreChamp(c, ally, enemies) {
+  let score = 0; const reasons = [];
+  const s = statOf(c);
+  const addPair = (r, label) => {
+    const v = pairScore(r);
+    score += v;
+    if (Math.abs(v) >= 0.3) reasons.push([v > 0 ? 'plus' : 'minus', `${label} ${r.win}%（${r.games}試合）`]);
+  };
+  // 実データが30試合以上ある組み合わせは、手書きの相性（great/good/weakVs/strongVs）より優先する
+  const duo = ally && s && s.duo && s.duo[ally];
+  if (duo) addPair(duo, `${ally}とのデュオ勝率`);
+  const trusted = (r) => r && r.games >= 30;
+  for (const en of enemies) {
+    if (en !== c.name && s && s.matchups && s.matchups[en]) addPair(s.matchups[en], `${en}との対面勝率`);
+  }
+  if (!trusted(duo)) {
+    if (c.great.includes(ally)) { score += 3; reasons.push(['plus', `${ally}と特に相性が良い（相性メモ）`]); }
+    else if (c.good.includes(ally)) { score += 1.5; reasons.push(['plus', `${ally}と相性が良い（相性メモ）`]); }
+  }
+  for (const en of enemies) {
+    if (en === c.name) { score -= 10; reasons.push(['minus', '相手が使用中']); continue; }
+    if (trusted(s && s.matchups && s.matchups[en])) continue;
+    if (c.weakVs.includes(en)) { score -= 2; reasons.push(['minus', `${en}が苦手（相性メモ）`]); }
+    if (c.strongVs.includes(en)) { score += 1.5; reasons.push(['plus', `${en}に強い（相性メモ）`]); }
+  }
+  const divers = enemies.filter((e) => (L.divers || []).includes(e)).length;
+  if (divers >= 2) {
+    const v = (c.peel - 1) * Math.min(divers - 1, 2);
+    if (v > 0) { score += v; reasons.push(['plus', `相手にダイバーが${divers}体 → 守りが活きる`]); }
+    if (v < 0) { score += v; reasons.push(['minus', `相手にダイバーが${divers}体 → 守りが薄い`]); }
+  }
+  const immobile = enemies.filter((e) => (L.immobile || []).includes(e)).length;
+  if (immobile >= 2 && c.catch) {
+    score += 1; reasons.push(['plus', `逃げスキルの少ない相手が${immobile}体 → キャッチが刺さる`]);
+  }
+  // 勝率を少しだけ反映（50%から1%ずれるごとに±0.6、最大±2。試合数が少ないと半分）
+  if (s && s.win !== undefined) {
+    let v = Math.max(-2, Math.min(2, (s.win - 50) * 0.6));
+    if (s.count < 300) v /= 2;
+    if (v >= 0.5) reasons.push(['plus', `今のパッチで勝率 ${s.win}%`]);
+    if (v <= -0.5) reasons.push(['minus', `今のパッチで勝率 ${s.win}%`]);
+    score += v;
+  }
+  if (c.custom) reasons.push(['minus', '相性データ未登録']);
+  return { c, score: Math.round(score * 10) / 10, reasons };
+}
+const reasonList = (rs) => rs.length
+  ? `<ul class="reasons">${rs.map(([k, t]) => `<li class="${k}">${esc(t)}</li>`).join('')}</ul>` : '';
+
+function renderPick() {
+  const { ally, enemies } = LS.pick;
+  $('ally').value = ally;
+  $('pool-only').checked = LS.poolOnly;
+  $('enemy-chips').innerHTML = enemies.map((e, i) =>
+    `<span class="chip">${esc(e)}<button data-i="${i}" title="削除">×</button></span>`).join('')
+    || '<span class="muted small">まだ追加されていません</span>';
+
+  const all = champs().map((c) => scoreChamp(c, ally, enemies)).sort((a, b) => b.score - a.score);
+  const list = LS.poolOnly && LS.pool.length ? all.filter((r) => LS.pool.includes(r.c.name)) : all;
+  $('reco').innerHTML = list.slice(0, 6).map((r, i) => `
+    <div class="reco-item ${i === 0 ? 'top' : ''}">
+      <div class="rank">${i + 1}</div>
+      <div>
+        <span class="reco-name">${esc(r.c.name)}</span><span class="tag">${esc(r.c.type)}</span>
+        ${statOf(r.c) ? `<div class="muted small">${esc(statLine(statOf(r.c)))}</div>` : ''}
+        ${reasonList(r.reasons) || '<div class="muted small">特記事項なし</div>'}
+      </div>
+      <div class="side">
+        <span class="score">${r.score > 0 ? '+' : ''}${r.score}</span>
+        ${r.c.name === LS.champ ? '<span class="muted small">使用中</span>'
+          : `<button class="btn sm" data-use="${esc(r.c.name)}">使う</button>`}
+      </div>
+    </div>`).join('') || '<span class="muted small">プールが空です</span>';
+
+  // 選択中のチャンピオンの判定
+  const me = all.find((r) => r.c.name === LS.champ);
+  const rank = list.indexOf(me) + 1;
+  let cls = 'ok', head = `GO：${LS.champ}でOK`;
+  if (me.score < 0) { cls = 'ng'; head = '非推奨：他のチャンピオンを検討'; }
+  else if (rank === 0 || rank > 3) { cls = 'mid'; head = '出せるけど、他にもっと良い選択肢あり'; }
+  $('verdict-title').textContent = `${LS.champ}を出していい？`;
+  const myStat = statOf(me.c) ? `<p class="small">${esc(statLine(statOf(me.c)))}</p>` : '';
+  $('verdict').innerHTML = !ally && !enemies.length
+    ? `${myStat}<p class="muted small">${esc(L.allyLabel)}と相手を入れると判定します。</p>`
+    : `<div class="verdict ${cls}"><strong>${esc(head)}</strong>
+         <div class="muted small">${rank ? `順位 ${rank}位 / ` : ''}スコア ${me.score}</div></div>
+       ${myStat}${reasonList(me.reasons)}`;
+
+  $('pool').innerHTML = champs().map((c) =>
+    `<span class="chip toggle ${LS.pool.includes(c.name) ? 'on' : ''}" data-pool="${esc(c.name)}">${esc(c.name)}</span>`).join('');
+}
+
+function addEnemy() {
+  const v = norm($('enemy-input').value);
+  if (!v) return;
+  if (!LS.pick.enemies.includes(v)) LS.pick.enemies.push(v);
+  $('enemy-input').value = '';
+  refreshPick();
+}
+// BAN/PICKの変更をチートシート（対面タブ・注意欄）にも反映する
+function refreshPick() { save(); renderPick(); renderCheat(); renderCheatWarn(); }
+// 統計の取得日から14日（パッチ1回分）たったら更新を促す
+const statsAge = ST ? Math.max(0, Math.floor((Date.now() - new Date(`${ST.fetchedAt}T00:00:00`)) / 86400000)) : null;
+$('stats-src').textContent = ST
+  ? `今の統計: ${ST.source} パッチ${ST.patch} / ${ST.region} / ${ST.tier}（${ST.fetchedAt}取得、${statsAge}日前）`
+  : '統計はまだ取得されていません。';
+if (!ST || statsAge >= 14) {
+  $('stats-warn').textContent = SINGLE
+    ? `統計を取ってから${statsAge}日たっています。パッチが変わっているかもしれません。配った人が新しい版を用意するのを待ってください。`
+    : ST
+    ? `統計を取ってから${statsAge}日たっています。パッチが変わっているかもしれないので、ページ下の「統計の更新」の手順で更新してください。`
+    : '統計がありません。ページ下の「統計の更新」の手順で取得できます。';
+}
+if (!SINGLE) $('copy-cmd').addEventListener('click', async () => {
+  const text = $('update-cmd').textContent;
+  try { await navigator.clipboard.writeText(text); }
+  catch (e) {
+    const range = document.createRange(); range.selectNodeContents($('update-cmd'));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand('copy');
+  }
+  toast('コピーしました');
+});
+$('ally').innerHTML = '<option value="">（未選択）</option>' + L.allies.map((a) => `<option>${esc(a)}</option>`).join('');
+$('champ-list').innerHTML = [...new Set([...(ST ? ST.names : []), ...L.allies, ...(L.divers || []), ...(L.immobile || []),
+  ...L.champions.flatMap((c) => [c.name, ...c.weakVs, ...c.strongVs])])].sort()
+  .map((c) => `<option value="${esc(c)}">`).join('');
+$('ally').addEventListener('change', (e) => { LS.pick.ally = e.target.value; save(); renderPick(); });
+$('enemy-add').addEventListener('click', addEnemy);
+$('enemy-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') addEnemy(); });
+$('enemy-chips').addEventListener('click', (e) => {
+  const i = e.target.dataset.i;
+  if (i === undefined) return;
+  LS.pick.enemies.splice(Number(i), 1); refreshPick();
+});
+$('pick-reset').addEventListener('click', () => {
+  LS.pick = { ally: '', enemies: [] }; refreshPick();
+});
+$('pool-only').addEventListener('change', (e) => { LS.poolOnly = e.target.checked; save(); renderPick(); });
+$('pool').addEventListener('click', (e) => {
+  const name = e.target.dataset.pool;
+  if (!name) return;
+  LS.pool = LS.pool.includes(name) ? LS.pool.filter((n) => n !== name) : [...LS.pool, name];
+  save(); renderPick();
+});
+$('reco').addEventListener('click', (e) => {
+  const name = e.target.dataset.use;
+  if (name) { setChamp(name); toast(`${name} に切り替えました`); }
+});
+
+// ================= チートシート =================
+let cheatId = L.sections[0].id;
+function renderCheat() {
+  const c = getChamp(LS.champ);
+  const tabs = [...L.sections, ...(L.enemyInfo ? [{ id: 'vs', label: '対面' }] : []), { id: 'notes', label: 'マイメモ' },
+    ...(window.GLOSSARY ? [{ id: 'glossary', label: '用語' }] : [])];
+  $('cheat-tabs').innerHTML = tabs.map((s) =>
+    `<button class="tab ${s.id === cheatId ? 'active' : ''}" data-id="${s.id}">${esc(s.label)}</button>`).join('');
+
+  if (cheatId === 'notes') {
+    $('cheat-body').innerHTML = `
+      <h2>${esc(c.name)} のマイメモ</h2>
+      <p class="muted small">気づいたこと・反省から学んだことを書き溜める場所。自動で保存されます。</p>
+      <textarea id="my-notes" style="min-height:260px" placeholder="例: 相手がモルガナのときはEを先に使わせてから…">${esc(LS.notes[c.name] || '')}</textarea>`;
+    $('my-notes').addEventListener('input', (e) => { LS.notes[c.name] = e.target.value; save(); });
+    return;
+  }
+  if (cheatId === 'vs') { renderVs(c); return; }
+  if (cheatId === 'glossary') { $('cheat-body').innerHTML = `<h2>用語の説明</h2>${glossaryHtml()}`; return; }
+  const own = c.cheat && c.cheat[cheatId];
+  const common = L.common && L.common[cheatId];
+  const label = L.sections.find((s) => s.id === cheatId).label;
+  const note = (LS.notes[c.name] || '').trim();
+  $('cheat-body').innerHTML = `
+    <h2>${esc(c.name)} — ${esc(label)}</h2>
+    ${buildHtml(c, cheatId)}
+    ${!isEmptySection(own) ? sectionHtml(own)
+      : `<p class="muted small">${esc(c.name)} 固有のチートシートはまだありません。data/${esc(L.id)}.js に追加するか、マイメモに書いてください。</p>`}
+    ${!isEmptySection(common) ? `<h3 class="common-h">${esc(L.name)}共通</h3>${sectionHtml(common)}` : ''}
+    ${note ? `<h3 class="common-h">マイメモ</h3><div style="white-space:pre-wrap">${esc(note)}</div>` : ''}`;
+}
+
+// チートシートの項目: 文字列 か [見出し, 説明]。セクション: 配列 か { summary, groups: [{ label, tone, items }] }
+// （データファイルは自分で書くものなので、<b> などのタグはそのまま表示する）
+const richItem = (t) => Array.isArray(t)
+  ? `<li><b>${t[0]}</b>${t[1] ? `<div class="rich-d">${t[1]}</div>` : ''}</li>` : `<li>${t}</li>`;
+const richList = (items) => (items && items.length ? `<ul class="rich">${items.map(richItem).join('')}</ul>` : '');
+const isEmptySection = (v) => !v || (Array.isArray(v) ? !v.length : !(v.summary || (v.groups || []).length));
+function sectionHtml(v) {
+  if (Array.isArray(v)) return richList(v);
+  return `${v.summary ? `<p class="sec-summary">${v.summary}</p>` : ''}${(v.groups || []).map((g) =>
+    `<div class="sec-group ${g.tone || ''}"><div class="vs-label">${g.label}</div>${richList(g.items)}</div>`).join('')}`;
+}
+// LOL.PS の人気ビルド（装備タブ）と、スキルの上げ順・サモナースペル（Lv1〜3タブ）
+function buildHtml(c, sec) {
+  const s = statOf(c);
+  const b = s && s.build;
+  if (!b) return '';
+  const src = ST ? `<span class="muted small">（LOL.PS パッチ${esc(ST.patch)}）</span>` : '';
+  if (sec === 'early' && (b.skills.length || b.spells.length)) {
+    return `<div class="build"><div class="vs-label">📊 データで見る基本 ${src}</div>
+      ${b.skills.length ? `<div>スキル上げ: <b>${b.skills.map(esc).join(' → ')}</b> の順に最大まで上げる（R は 6・11・16 で必ず取る）</div>` : ''}
+      ${b.spells.length ? `<div>サモナースペル: <b>${b.spells.map(esc).join(' ＋ ')}</b></div>` : ''}
+    </div>`;
+  }
+  if (sec === 'items' && (b.core.length || b.start.length)) {
+    return `<div class="build"><div class="vs-label">📦 テンプレ（人気ビルド）${src}</div>
+      ${b.start.length ? `<div>スタート: <b>${b.start.flat().map(esc).join(' ＋ ')}</b></div>` : ''}
+      ${b.core.length ? `<div>コア: <b>${b.core.map(esc).join(' → ')}</b></div>` : ''}
+      ${b.shoes ? `<div>ブーツ: <b>${esc(b.shoes)}</b></div>` : ''}
+      ${b.slots.length ? `<details><summary>何個目に何を買うか（候補）</summary><ol>${b.slots.map((x) =>
+        `<li>${x.map(esc).join(' / ')}</li>`).join('')}</ol></details>` : ''}
+    </div>`;
+  }
+  return '';
+}
+// 対面タブ: BAN/PICKで入れた相手（＋一覧から選んだ相手）の強み・対策・避けるスキル・強い時間
+let vsLookup = '';
+// 対面勝率から有利・不利の目安を出す（30試合未満は「データ少なめ」）
+function matchupRating(m) {
+  if (!m) return null;
+  const label = m.win >= 54 ? '有利' : m.win >= 51.5 ? 'やや有利' : m.win > 48.5 ? '互角' : m.win > 46 ? 'やや不利' : '不利';
+  const cls = m.win >= 51.5 ? 'good' : m.win > 48.5 ? 'even' : 'bad';
+  return { label: m.games < 30 ? `${label}?` : label, cls, text: `対面勝率 ${m.win}%（${m.games}試合${m.games < 30 ? '・データ少なめ' : ''}）` };
+}
+const asList = (v) => Array.isArray(v) ? v : v ? [v] : [];
+function enemyCard(c, name) {
+  const info = (L.enemyInfo || {})[name] || {};
+  const s = statOf(c);
+  const r = matchupRating(s && s.matchups && s.matchups[name]);
+  const note = c.matchupNotes && c.matchupNotes[name];
+  const sec = (title, body) => body ? `<div class="vs-sec"><div class="vs-label">${esc(title)}</div>${body}</div>` : '';
+  const ul = (items) => items.length ? `<ul>${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : '';
+  const ol = (items) => items.length ? `<ol>${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ol>` : '';
+  const dodge = asList(info.dodge).map((d) => Array.isArray(d)
+    ? `<li><b>${esc(d[0])}</b><br><span class="muted">${esc(d[1])}</span></li>` : `<li>${esc(d)}</li>`).join('');
+  // 対面メモは { early, mid, late, tip } か文字列
+  const noteHtml = !note ? '' : typeof note === 'string' ? `<p>${esc(note)}</p>` : `
+    <dl class="vs-flow">
+      ${note.early ? `<dt>Lv1〜3</dt><dd>${esc(note.early)}</dd>` : ''}
+      ${note.mid ? `<dt>Lv4〜6</dt><dd>${esc(note.mid)}</dd>` : ''}
+      ${note.late ? `<dt>Lv6以降・アイテム後</dt><dd>${esc(note.late)}</dd>` : ''}
+    </dl>
+    ${note.tip ? `<p class="vs-tip">💡 ${esc(note.tip)}</p>` : ''}`;
+  return `<div class="vs-card">
+    <div class="vs-head">
+      <h3>${esc(name)}${info.role ? `<span class="tag">${esc(info.role)}</span>` : ''}</h3>
+      ${r ? `<span class="badge ${r.cls}">${esc(r.label)}</span><span class="muted small">${esc(r.text)}</span>` : ''}
+    </div>
+    ${info.summary ? `<p class="vs-summary">${esc(info.summary)}</p>` : ''}
+    ${!Object.keys(info).length && !note ? '<p class="muted small">この相手の情報はまだありません。</p>' : ''}
+    ${noteHtml ? `<div class="vs-note"><div class="vs-label">${esc(c.name)}で戦うとき</div>${noteHtml}</div>` : ''}
+    ${sec('⚠ 気をつけるスキル（避け方）', dodge ? `<ul class="vs-dodge">${dodge}</ul>` : '')}
+    ${sec('戦い方', ol(asList(info.howto || info.counter)))}
+    ${info.goTime || info.backTime ? `<div class="vs-time">
+      ${info.goTime ? `<div class="go"><div class="vs-label">◎ 強気に出ていい時間</div>${esc(info.goTime)}</div>` : ''}
+      ${info.backTime || info.spike ? `<div class="back"><div class="vs-label">✕ 引くべき時間</div>${esc(info.backTime || info.spike)}</div>` : ''}
+    </div>` : ''}
+    ${sec('相手の強み', ul(asList(info.strength)))}
+    ${sec('相手に効く装備', info.items ? `<p>${esc(info.items)}</p>` : '')}
+  </div>`;
+}
+const glossaryHtml = () => (window.GLOSSARY || []).map(([t, d]) =>
+  `<div class="gl-row"><b>${esc(t)}</b><span>${esc(d)}</span></div>`).join('');
+function renderVs(c) {
+  const known = Object.keys(L.enemyInfo || {}).sort();
+  const s = statOf(c);
+  const hasData = (e) => known.includes(e) || (c.matchupNotes && c.matchupNotes[e]) || (s && s.matchups && s.matchups[e]);
+  const picked = LS.pick.enemies.filter((e) => e !== c.name);
+  const shown = [...new Set([...picked.filter(hasData), ...(vsLookup ? [vsLookup] : [])])];
+  const noData = picked.filter((e) => !hasData(e));
+  $('cheat-body').innerHTML = `
+    <h2>対面 — ${esc(c.name)}</h2>
+    ${c.spike ? `<p><b>自分が強い時間</b>: ${esc(c.spike)}</p>` : ''}
+    ${window.GLOSSARY ? `<details class="gl"><summary>用語が分からないときは（CD、CC、トレード…）</summary>${glossaryHtml()}</details>` : ''}
+    <select id="vs-lookup" style="max-width:320px">
+      <option value="">ほかの相手を見る…</option>
+      ${known.map((n) => `<option ${n === vsLookup ? 'selected' : ''}>${esc(n)}</option>`).join('')}
+    </select>
+    ${shown.length ? shown.map((n) => enemyCard(c, n)).join('')
+      : '<p class="muted small">BAN/PICKで相手を入れるか、上の一覧から選ぶと表示されます。</p>'}
+    ${noData.length ? `<p class="muted small">情報が未登録の相手: ${esc(noData.join('、'))}（data/${esc(L.id)}.js の enemyInfo に追加できます）</p>` : ''}`;
+  $('vs-lookup').addEventListener('change', (e) => { vsLookup = e.target.value; renderCheat(); });
+}
+
+function renderCheatWarn() {
+  // BAN/PICKで入れた相手から、選択中チャンピオン視点の注意を出す
+  const c = getChamp(LS.champ);
+  const en = LS.pick.enemies;
+  const lines = [];
+  const s = statOf(c);
+  const trusted = (e) => s && s.matchups && s.matchups[e] && s.matchups[e].games >= 30;
+  const weak = en.filter((e) => c.weakVs.includes(e) && !trusted(e));
+  if (weak.length) lines.push(`苦手（相性メモ）: ${weak.join('、')}`);
+  const strong = en.filter((e) => c.strongVs.includes(e) && !trusted(e));
+  if (strong.length) lines.push(`得意（相性メモ）: ${strong.join('、')}`);
+  const vs = en.filter((e) => s && s.matchups && s.matchups[e])
+    .map((e) => `${e} ${s.matchups[e].win}%（${s.matchups[e].games}試合）`);
+  if (vs.length) lines.push(`対面勝率: ${vs.join('、')}`);
+  const divers = en.filter((e) => (L.divers || []).includes(e));
+  if (divers.length) lines.push(`ダイバー: ${divers.join('、')} → 守りのスキルを残す`);
+  const imm = en.filter((e) => (L.immobile || []).includes(e));
+  if (imm.length) lines.push(`狙い目（逃げスキルが少ない）: ${imm.join('、')}`);
+  $('cheat-warn').innerHTML = lines.map(esc).join('<br>');
+}
+$('cheat-tabs').addEventListener('click', (e) => {
+  const id = e.target.dataset.id;
+  if (id) { cheatId = id; renderCheat(); }
+});
+
+// ================= 反省メモ =================
+let selectedReasons = new Set();
+
+function renderCurrent() {
+  const g = LS.current;
+  const box = $('current-game');
+  if (!g) {
+    box.innerHTML = `
+      <h2>試合を始める（${esc(LS.champ)}）</h2>
+      <p class="muted small">使用チャンピオンとBAN/PICKの内容（${esc(L.allyLabel)}・相手）が試合に記録されます。</p>
+      <div class="row"><button class="btn primary" id="start-game">試合開始</button></div>`;
+    $('start-game').addEventListener('click', () => {
+      LS.current = { id: Date.now(), start: Date.now(), champ: LS.champ,
+        ally: LS.pick.ally, enemies: [...LS.pick.enemies], deaths: [] };
+      save(); renderMemo(); toast('試合を開始しました');
+    });
+    return;
+  }
+  box.innerHTML = `
+    <h2>試合中のメモ：${esc(g.champ)} <span class="muted small">${esc(fmtDate(g.start))}〜 ／ ${esc(L.allyLabel)}: ${esc(g.ally || '未設定')}
+      ${g.enemies.length ? ' ／ 相手: ' + esc(g.enemies.join('、')) : ''}</span></h2>
+    <div class="grid2">
+      <div>
+        <label class="field">死因（タップで選択）</label>
+        <div class="chips" id="reason-chips">${L.deathReasons.map((r) =>
+          `<span class="chip toggle ${selectedReasons.has(r) ? 'on' : ''}" data-r="${esc(r)}">${esc(r)}</span>`).join('')}</div>
+        <label class="field" style="margin-top:10px">ゲーム内時間（任意）</label>
+        <input type="text" id="death-time" placeholder="例: 12:30">
+      </div>
+      <div>
+        <label class="field">メモ（Ctrl+Enterで保存）</label>
+        <textarea id="death-note" placeholder="何が起きた？ 次はどうする？"></textarea>
+        <div class="row" style="margin-top:8px"><button class="btn primary" id="save-death">デスを記録</button></div>
+      </div>
+    </div>
+    <h3>この試合のデス（${g.deaths.length}）</h3>
+    <div>${g.deaths.length ? g.deaths.map(deathHtml).join('') : '<span class="muted small">まだありません</span>'}</div>
+    <h3>試合終了</h3>
+    <textarea id="game-note" placeholder="試合全体の振り返り（任意）"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="btn primary" id="end-win">勝ち</button>
+      <button class="btn" id="end-lose">負け</button>
+      <button class="btn danger" id="end-cancel">この試合を破棄</button>
+    </div>`;
+
+  $('reason-chips').addEventListener('click', (e) => {
+    const r = e.target.dataset.r;
+    if (!r) return;
+    selectedReasons.has(r) ? selectedReasons.delete(r) : selectedReasons.add(r);
+    e.target.classList.toggle('on');
+  });
+  const saveDeath = () => {
+    const note = $('death-note').value.trim();
+    if (!note && !selectedReasons.size) { toast('死因かメモを入れてください'); return; }
+    g.deaths.push({ at: Date.now(), time: $('death-time').value.trim(), reasons: [...selectedReasons], note });
+    selectedReasons = new Set();
+    save(); renderMemo(); toast('記録しました');
+  };
+  $('save-death').addEventListener('click', saveDeath);
+  $('death-note').addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) saveDeath(); });
+  const end = (result) => {
+    g.result = result; g.note = $('game-note').value.trim(); g.end = Date.now();
+    LS.games.unshift(g); LS.current = null;
+    save(); renderMemo(); toast('試合を保存しました');
+  };
+  $('end-win').addEventListener('click', () => end('win'));
+  $('end-lose').addEventListener('click', () => end('lose'));
+  $('end-cancel').addEventListener('click', () => {
+    if (!confirm('この試合のメモを破棄しますか？')) return;
+    LS.current = null; save(); renderMemo();
+  });
+}
+
+function deathHtml(d) {
+  return `<div class="death">
+    <div class="meta">${d.time ? esc(d.time) + ' ／ ' : ''}${esc(fmtDate(d.at))}</div>
+    ${d.reasons.length ? `<div class="chips" style="margin-top:2px">${d.reasons.map((r) => `<span class="chip">${esc(r)}</span>`).join('')}</div>` : ''}
+    ${d.note ? `<div>${esc(d.note)}</div>` : ''}
+  </div>`;
+}
+
+const visibleGames = () => LS.memoAll ? LS.games : LS.games.filter((g) => g.champ === LS.champ);
+
+function renderStats() {
+  $('memo-all').checked = LS.memoAll;
+  const games = visibleGames();
+  const all = [...games, ...(LS.current && (LS.memoAll || LS.current.champ === LS.champ) ? [LS.current] : [])];
+  const counts = {};
+  all.forEach((g) => g.deaths.forEach((d) => d.reasons.forEach((r) => { counts[r] = (counts[r] || 0) + 1; })));
+  const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const max = rows.length ? rows[0][1] : 1;
+  const wins = games.filter((g) => g.result === 'win').length;
+  $('stats').innerHTML = `
+    <p class="small">${LS.memoAll ? '全チャンピオン' : esc(LS.champ)}：試合数 ${games.length}（${wins}勝 ${games.length - wins}敗）／ デス合計 ${all.reduce((n, g) => n + g.deaths.length, 0)}</p>
+    ${rows.length ? rows.map(([r, n]) => `
+      <div class="stat-row"><span>${esc(r)}</span><div class="bar" style="width:${(n / max) * 100}%"></div><span>${n}</span></div>`).join('')
+      : '<span class="muted small">まだデータがありません</span>'}`;
+}
+
+function renderHistory() {
+  const games = visibleGames();
+  $('history-title').textContent = `過去の試合（${LS.memoAll ? '全チャンピオン' : LS.champ}）`;
+  $('history').innerHTML = games.length ? games.map((g) => `
+    <details class="game">
+      <summary>
+        <span class="${g.result === 'win' ? 'win' : 'lose'}">${g.result === 'win' ? '勝ち' : '負け'}</span>
+        ${esc(fmtDate(g.start))} ／ ${esc(g.champ)} ／ ${esc(L.allyLabel)}: ${esc(g.ally || '-')} ／ デス ${g.deaths.length}
+      </summary>
+      ${g.enemies.length ? `<p class="small muted">相手: ${esc(g.enemies.join('、'))}</p>` : ''}
+      ${g.note ? `<p>${esc(g.note)}</p>` : ''}
+      ${g.deaths.map(deathHtml).join('')}
+      <div class="row" style="margin-top:6px"><button class="btn danger sm" data-del="${g.id}">削除</button></div>
+    </details>`).join('') : '<span class="muted small">まだありません</span>';
+}
+$('history').addEventListener('click', (e) => {
+  const id = e.target.dataset.del;
+  if (!id || !confirm('この試合を削除しますか？')) return;
+  LS.games = LS.games.filter((g) => String(g.id) !== id);
+  save(); renderMemo();
+});
+$('memo-all').addEventListener('change', (e) => { LS.memoAll = e.target.checked; save(); renderMemo(); });
+
+function renderMemo() { renderCurrent(); renderStats(); renderHistory(); }
+
+// 書き出し・読み込み（このレーンの分だけ）
+$('export').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({ lane: L.id, ...LS }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `lol-note-${L.id}-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$('import').addEventListener('click', () => $('import-file').click());
+$('import-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    if (!Array.isArray(data.games)) throw new Error();
+    if (data.lane && data.lane !== L.id) { toast(`別レーン（${data.lane}）のデータです`); return; }
+    const known = new Set(LS.games.map((g) => g.id));
+    LS.games = [...LS.games, ...data.games.filter((g) => !known.has(g.id))].sort((a, b) => b.start - a.start);
+    LS.custom = [...new Set([...LS.custom, ...(data.custom || [])])];
+    for (const [k, v] of Object.entries(data.notes || {})) if (!LS.notes[k]) LS.notes[k] = v;
+    save(); renderAll(); toast('読み込みました');
+  } catch (err) { toast('読み込みに失敗しました'); }
+  e.target.value = '';
+});
+
+// ================= 初期表示 =================
+function renderAll() { renderHeader(); renderPick(); renderCheat(); renderCheatWarn(); renderMemo(); }
+renderAll();
+})();
+</script>
+</body>
+</html>
