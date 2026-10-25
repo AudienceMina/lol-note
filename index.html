@@ -138,6 +138,11 @@ ul.rich { margin: 0 0 6px; padding-left: 20px; }
 .build summary { cursor: pointer; color: var(--muted); }
 .build ol { margin: 4px 0 0; padding-left: 20px; }
 .cheat h3.common-h { font-size: 14px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 18px; }
+.vs-picker { display: grid; gap: 8px; margin: 4px 0 6px; }
+.vs-picker .chips { margin-top: 0; }
+.vs-picker button.chip { font: inherit; font-size: 15px; color: var(--text); padding: 6px 14px; cursor: pointer; }
+.vs-picker button.chip.on { color: var(--accent-ink); }
+.vs-picker select { max-width: 320px; }
 .vs-card { border: 1px solid var(--border); border-radius: var(--radius); margin-top: 14px; padding: 12px 14px; background: var(--bg); }
 .vs-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .vs-card h3 { font-size: 18px; color: var(--text); font-weight: 700; margin: 0; }
@@ -1653,6 +1658,8 @@ function addEnemy() {
   if (!v) return;
   if (!LS.pick.enemies.includes(v)) LS.pick.enemies.push(v);
   $('enemy-input').value = '';
+  // 対面タブは今追加した相手を表示する
+  vsSelected = v; vsFromLookup = false;
   refreshPick();
 }
 // BAN/PICKの変更をチートシート（対面タブ・注意欄）にも反映する
@@ -1772,8 +1779,10 @@ function buildHtml(c, sec) {
   }
   return '';
 }
-// 対面タブ: BAN/PICKで入れた相手（＋一覧から選んだ相手）の強み・対策・避けるスキル・強い時間
-let vsLookup = '';
+// 対面タブ: 選んだ相手1体の強み・対策・避けるスキル・強い時間を表示する
+// （BAN/PICKで入れた相手はボタンで、それ以外は一覧から選ぶ）
+let vsSelected = '';
+let vsFromLookup = false;
 // 対面勝率から有利・不利の目安を出す（30試合未満は「データ少なめ」）
 function matchupRating(m) {
   if (!m) return null;
@@ -1825,20 +1834,36 @@ function renderVs(c) {
   const s = statOf(c);
   const hasData = (e) => known.includes(e) || (c.matchupNotes && c.matchupNotes[e]) || (s && s.matchups && s.matchups[e]);
   const picked = LS.pick.enemies.filter((e) => e !== c.name);
-  const shown = [...new Set([...picked.filter(hasData), ...(vsLookup ? [vsLookup] : [])])];
+  const candidates = picked.filter(hasData);
   const noData = picked.filter((e) => !hasData(e));
+  // BAN/PICKから選んでいた相手が消えたら、残っている先頭の相手に切り替える
+  if (!vsSelected || vsSelected === c.name || (!vsFromLookup && !candidates.includes(vsSelected))) {
+    vsSelected = candidates[0] || ''; vsFromLookup = false;
+  }
   $('cheat-body').innerHTML = `
     <h2>対面 — ${esc(c.name)}</h2>
     ${c.spike ? `<p><b>自分が強い時間</b>: ${esc(c.spike)}</p>` : ''}
     ${window.GLOSSARY ? `<details class="gl"><summary>用語が分からないときは（CD、CC、トレード…）</summary>${glossaryHtml()}</details>` : ''}
-    <select id="vs-lookup" style="max-width:320px">
-      <option value="">ほかの相手を見る…</option>
-      ${known.map((n) => `<option ${n === vsLookup ? 'selected' : ''}>${esc(n)}</option>`).join('')}
-    </select>
-    ${shown.length ? shown.map((n) => enemyCard(c, n)).join('')
+    <div class="vs-picker">
+      ${candidates.length ? `<div class="vs-label">BAN/PICKの相手</div>
+        <div class="chips">${candidates.map((n) =>
+          `<button class="chip toggle ${n === vsSelected ? 'on' : ''}" data-vs="${esc(n)}">${esc(n)}</button>`).join('')}</div>` : ''}
+      <select id="vs-lookup">
+        <option value="">ほかの相手を見る…</option>
+        ${known.filter((n) => n !== c.name).map((n) =>
+          `<option ${vsFromLookup && n === vsSelected ? 'selected' : ''}>${esc(n)}</option>`).join('')}
+      </select>
+    </div>
+    ${vsSelected ? enemyCard(c, vsSelected)
       : '<p class="muted small">BAN/PICKで相手を入れるか、上の一覧から選ぶと表示されます。</p>'}
     ${noData.length ? `<p class="muted small">情報が未登録の相手: ${esc(noData.join('、'))}（data/${esc(L.id)}.js の enemyInfo に追加できます）</p>` : ''}`;
-  $('vs-lookup').addEventListener('change', (e) => { vsLookup = e.target.value; renderCheat(); });
+  $('vs-lookup').addEventListener('change', (e) => {
+    if (!e.target.value) return;
+    vsSelected = e.target.value; vsFromLookup = true; renderCheat();
+  });
+  $('cheat-body').querySelectorAll('[data-vs]').forEach((b) => b.addEventListener('click', () => {
+    vsSelected = b.dataset.vs; vsFromLookup = false; renderCheat();
+  }));
 }
 
 function renderCheatWarn() {
